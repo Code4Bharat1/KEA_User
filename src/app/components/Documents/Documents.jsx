@@ -16,7 +16,7 @@ import UserSidebar from '../layout/sidebar';
 import UserNavbar from '../layout/navbar';
 import PDFViewer from './PDFViewer'; // Import the viewer
 
-export default function Documents() {
+export default function DocumentsPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);

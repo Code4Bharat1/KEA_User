@@ -1,5 +1,5 @@
-import Documents from '@/app/components/documents/Documents';
-
+import React from 'react';
+import DocumentsPage from '@/app/components/documents/Documents';
 export default function DocumentsPage() {
-  return <Documents />;
+  return <DocumentsPage />;
 }
