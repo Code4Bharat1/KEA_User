@@ -1,5 +1,5 @@
 import React from 'react';
-import DocumentsPage from '@/app/components/documents/Documents';
+import DocumentsPage from '../../components/Documents/Documents';
 export default function DocumentsPage() {
   return <DocumentsPage />;
 }
