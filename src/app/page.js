@@ -1,14 +1,12 @@
-'use client';
+import React from 'react'
+import KEALandingPage from './components/home/landingpage'
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
-export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.push('/login');
-  }, [router]);
-
-  return null;
+const page = () => {
+  return (
+    <div>
+      <KEALandingPage/>
+    </div>
+  )
 }
+
+export default page
