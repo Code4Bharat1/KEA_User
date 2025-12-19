@@ -910,7 +910,7 @@ export default function UserProfile() {
                 </div>
 
                 {/* Documents */}
-                <div className="bg-white rounded-lg border border-gray-200 p-5">
+                {/* <div className="bg-white rounded-lg border border-gray-200 p-5">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-semibold text-gray-900">Documents</h3>
                     <button className="text-xs text-blue-600 hover:text-blue-700">Upload profile card certificate</button>
@@ -941,10 +941,10 @@ export default function UserProfile() {
                   <button className="w-full mt-3 px-3 py-2 text-sm text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
                     Manage documents
                   </button>
-                </div>
+                </div> */}
 
                 {/* References */}
-                <div className="bg-white rounded-lg border border-gray-200 p-5">
+                {/* <div className="bg-white rounded-lg border border-gray-200 p-5">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-semibold text-gray-900">References</h3>
                     <button className="text-xs text-gray-500">KEA members who referred you</button>
@@ -969,7 +969,7 @@ export default function UserProfile() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Profile Completion */}
                 <div className="bg-white rounded-lg border border-gray-200 p-5">

@@ -99,31 +99,37 @@ export default function KnowledgeHub() {
   };
 
   const handleCreateResource = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const token = localStorage.getItem('userToken');
-      const resourceData = {
-        ...newResource,
-        tags: newResource.tags.split(',').map(tag => tag.trim()).filter(Boolean)
-      };
+  try {
+    const token = localStorage.getItem('userToken');
 
-      await axios.post(`${API_URL}/resources`, resourceData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+    const resourceData = {
+      ...newResource,
+      tags: Array.isArray(newResource.tags)
+        ? newResource.tags
+        : typeof newResource.tags === 'string'
+        ? newResource.tags.split(',').map(tag => tag.trim()).filter(Boolean)
+        : []
+    };
 
-      setShowCreateModal(false);
-      resetForm();
-      fetchResources();
-      fetchCategories();
-      alert('Resource created successfully!');
-    } catch (error) {
-      alert(error.response?.data?.message || 'Failed to create resource');
-    } finally {
-      setLoading(false);
-    }
-  };
+    await axios.post(`${API_URL}/resources/`, resourceData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    setShowCreateModal(false);
+    resetForm();
+    fetchResources();
+    fetchCategories();
+    alert('Resource created successfully!');
+  } catch (error) {
+    alert(error.response?.data?.message || 'Failed to create resource');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleFileUpload = async (e) => {
     e.preventDefault();

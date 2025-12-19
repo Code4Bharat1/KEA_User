@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, User, Phone, MapPin, UserPlus, Briefcase, GraduationCap, Award } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, Phone, MapPin, Briefcase } from 'lucide-react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -35,15 +35,11 @@ export default function UserRegister() {
     reference1Contact: '',
     reference2Name: '',
     reference2Contact: '',
-    
-    // Supporting Documents
-    resume: null,
-    certificates: [],
   });
   
   const [error, setError] = useState('');
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7101/api';
 
   const categories = [
     'Software Engineering',
@@ -63,15 +59,6 @@ export default function UserRegister() {
       [e.target.name]: e.target.value,
     });
     setError('');
-  };
-
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    if (name === 'resume') {
-      setFormData({ ...formData, resume: files[0] });
-    } else if (name === 'certificates') {
-      setFormData({ ...formData, certificates: Array.from(files) });
-    }
   };
 
   const validateStep1 = () => {
@@ -111,81 +98,55 @@ export default function UserRegister() {
     setError('');
   };
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+ const handleRegister = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
 
-    try {
-      // Create FormData for file uploads
-      const submitData = new FormData();
-      
-      // Add basic data
-      submitData.append('name', formData.name);
-      submitData.append('email', formData.email);
-      submitData.append('password', formData.password);
-      submitData.append('role', 'user');
-      
-      // Add profile data as JSON
-      const profileData = {
-        phone: formData.phone,
-        location: formData.location,
-        headline: formData.headline,
-        bio: formData.bio,
-        company: formData.company,
-        position: formData.position,
-        experience: formData.experience,
-        category: formData.category,
-        references: [
-          {
-            name: formData.reference1Name,
-            contact: formData.reference1Contact,
-          },
-          {
-            name: formData.reference2Name,
-            contact: formData.reference2Contact,
-          }
-        ].filter(ref => ref.name && ref.contact)
-      };
-      
-      submitData.append('profile', JSON.stringify(profileData));
-      
-      // Add files if any
-      if (formData.resume) {
-        submitData.append('resume', formData.resume);
-      }
-      
-      formData.certificates.forEach((cert, index) => {
-        submitData.append(`certificate${index}`, cert);
-      });
+  try {
+    const profileData = {
+      phone: formData.phone || "",
+      location: formData.location || "",
+      headline: formData.headline || "",
+      bio: formData.bio || "",
+      company: formData.company || "",
+      position: formData.position || "",
+      skills: Array.isArray(formData.skills) ? formData.skills : [],
+      // ❌ DO NOT SEND experience here
+      // ❌ DO NOT SEND education
+      // ❌ DO NOT SEND references
+      // ❌ DO NOT SEND category
+    };
 
-      await axios.post(`${API_URL}/auth/register`, submitData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+    const response = await axios.post(`${API_URL}/auth/register`, {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      role: "user",
+      profile: profileData,
+      membershipStatus: "pending",
+    });
 
-      // Show success message
-      alert('Registration successful! Your account is pending approval. You will receive an email once approved.');
-      
-      // Redirect to login
-      router.push('/login');
-    } catch (err) {
-      console.error('Registration error:', err);
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    alert("Registration successful! Your account is pending approval.");
+    router.push("/login");
+
+  } catch (err) {
+    console.error("Registration error:", err);
+    setError(err.response?.data?.message || "Registration failed");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-teal-50 flex items-center justify-center p-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-teal-50 flex items-center justify-center p-4 py-12">
       <div className="w-full max-w-3xl">
         {/* Register Card */}
         <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
           {/* Header */}
-          <div className="bg-linear-to-r from-teal-500 to-cyan-500 px-8 py-6">
-            <div className="flex items-center justify-center mb-4 bg-black">
+          <div className="bg-gradient-to-r from-teal-500 to-cyan-500 px-8 py-6">
+            <div className="flex items-center justify-center mb-4">
               <img 
                 src="/logo1.png" 
                 alt="KEA Logo" 
@@ -249,7 +210,7 @@ export default function UserRegister() {
                     {/* Full Name */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Full Name
+                        Full Name <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -265,7 +226,7 @@ export default function UserRegister() {
                     {/* Email */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Email
+                        Email Address <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="email"
@@ -281,7 +242,7 @@ export default function UserRegister() {
                     {/* Phone */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Enter your email
+                        Phone Number <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="tel"
@@ -294,10 +255,10 @@ export default function UserRegister() {
                       />
                     </div>
 
-                    {/* Location */}
+                    {/* Category */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Enter your category
+                        Engineering Category <span className="text-red-500">*</span>
                       </label>
                       <select
                         name="category"
@@ -316,7 +277,7 @@ export default function UserRegister() {
                     {/* Password */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Enter your email
+                        Password <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <input
@@ -324,8 +285,9 @@ export default function UserRegister() {
                           name="password"
                           value={formData.password}
                           onChange={handleInputChange}
-                          placeholder="Create a password"
+                          placeholder="Create a password (min. 6 characters)"
                           required
+                          minLength={6}
                           className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                         />
                         <button
@@ -341,7 +303,7 @@ export default function UserRegister() {
                     {/* Confirm Password */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Enter your category
+                        Confirm Password <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <input
@@ -351,6 +313,7 @@ export default function UserRegister() {
                           onChange={handleInputChange}
                           placeholder="Confirm your password"
                           required
+                          minLength={6}
                           className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                         />
                         <button
@@ -367,7 +330,7 @@ export default function UserRegister() {
                   {/* Location Full Width */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Location (City, State, Country)
+                      Location (City, State, Country) <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -390,14 +353,14 @@ export default function UserRegister() {
                   {/* Headline */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Professional headline (e.g., "Senior Software Engineer")
+                      Professional Headline
                     </label>
                     <input
                       type="text"
                       name="headline"
                       value={formData.headline}
                       onChange={handleInputChange}
-                      placeholder="Enter your professional headline"
+                      placeholder="e.g., Senior Software Engineer"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                     />
                   </div>
@@ -405,7 +368,7 @@ export default function UserRegister() {
                   {/* Bio */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Short bio (optional, but recommended for profile)
+                      Short Bio
                     </label>
                     <textarea
                       name="bio"
@@ -413,7 +376,7 @@ export default function UserRegister() {
                       onChange={handleInputChange}
                       placeholder="Tell us about yourself and your professional experience..."
                       rows="4"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
                     />
                   </div>
 
@@ -421,7 +384,7 @@ export default function UserRegister() {
                     {/* Company */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Current company/organization (if applicable)
+                        Current Company/Organization
                       </label>
                       <input
                         type="text"
@@ -436,7 +399,7 @@ export default function UserRegister() {
                     {/* Position */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Current position/role (if applicable)
+                        Current Position/Role
                       </label>
                       <input
                         type="text"
@@ -451,7 +414,7 @@ export default function UserRegister() {
                     {/* Years of Experience */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Years of experience
+                        Years of Experience
                       </label>
                       <input
                         type="text"
@@ -476,7 +439,7 @@ export default function UserRegister() {
                     {/* Reference 1 Name */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Reference member #1
+                        Reference Member #1 Name
                       </label>
                       <input
                         type="text"
@@ -491,14 +454,14 @@ export default function UserRegister() {
                     {/* Reference 1 Contact */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Enter member ID
+                        Member #1 ID or Contact
                       </label>
                       <input
                         type="text"
                         name="reference1Contact"
                         value={formData.reference1Contact}
                         onChange={handleInputChange}
-                        placeholder="KEA member ID"
+                        placeholder="KEA member ID or email"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                       />
                     </div>
@@ -506,7 +469,7 @@ export default function UserRegister() {
                     {/* Reference 2 Name */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Reference member #2
+                        Reference Member #2 Name
                       </label>
                       <input
                         type="text"
@@ -521,51 +484,23 @@ export default function UserRegister() {
                     {/* Reference 2 Contact */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Enter member ID
+                        Member #2 ID or Contact
                       </label>
                       <input
                         type="text"
                         name="reference2Contact"
                         value={formData.reference2Contact}
                         onChange={handleInputChange}
-                        placeholder="KEA member ID"
+                        placeholder="KEA member ID or email"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                       />
                     </div>
                   </div>
 
-                  <div className="mt-6">
-                    <h4 className="text-sm font-semibold text-gray-900 mb-4">Supporting documents</h4>
-                    <p className="text-sm text-gray-600 mb-4">Upload relevant documents (optional, PDF / JPEG only, max 5 MB)</p>
-                    
-                    {/* Resume */}
-                    <div className="mb-4">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Resume/CV
-                      </label>
-                      <input
-                        type="file"
-                        name="resume"
-                        onChange={handleFileChange}
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                      />
-                    </div>
-
-                    {/* Certificates */}
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Certificates/Licenses (you can upload multiple)
-                      </label>
-                      <input
-                        type="file"
-                        name="certificates"
-                        onChange={handleFileChange}
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        multiple
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                      />
-                    </div>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                    <p className="text-sm text-blue-800">
+                      💡 Your application will be reviewed by KEA administrators. You'll receive an email notification once your membership is approved.
+                    </p>
                   </div>
                 </div>
               )}
@@ -578,7 +513,7 @@ export default function UserRegister() {
                     onClick={handlePrevStep}
                     className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
                   >
-                    Back
+                    ← Back
                   </button>
                 )}
                 
@@ -602,9 +537,7 @@ export default function UserRegister() {
                         Submitting...
                       </>
                     ) : (
-                      <>
-                        Submit Application
-                      </>
+                      'Submit Application'
                     )}
                   </button>
                 )}

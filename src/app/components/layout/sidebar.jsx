@@ -160,12 +160,12 @@ export default function UserSidebar({ isOpen, onClose }) {
         flex flex-col
       `}>
         {/* Logo */}
-        <div className="p-6 border-b border-gray-200 shrink-0">
+        <div className="p-6 border-b border-gray-200 shrink-0 bg-gradient-to-br from-[#0D2847] to-[#1a3a5c]">
           <div className="flex items-center justify-between ">
             <img 
               src="/logo1.png" 
               alt="KEA Logo" 
-              className="h-12 object-contain"
+              className="h-12 object-cover"
               onError={(e) => {
                 e.target.style.display = 'none';
                 e.target.nextSibling.style.display = 'flex';
