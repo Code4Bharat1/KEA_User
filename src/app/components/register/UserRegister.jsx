@@ -1,10 +1,19 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, User, Phone, MapPin, Briefcase } from 'lucide-react';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useState } from "react";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  User,
+  Phone,
+  MapPin,
+  Briefcase,
+} from "lucide-react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function UserRegister() {
   const router = useRouter();
@@ -12,45 +21,46 @@ export default function UserRegister() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
-  
+
   const [formData, setFormData] = useState({
     // Personal Details
-    name: '',
-    email: '',
-    phone: '',
-    location: '',
-    password: '',
-    confirmPassword: '',
-    
-    // Professional Details
-    headline: '',
-    bio: '',
-    company: '',
-    position: '',
-    experience: '',
-    category: '',
-    
-    // References
-    reference1Name: '',
-    reference1Contact: '',
-    reference2Name: '',
-    reference2Contact: '',
-  });
-  
-  const [error, setError] = useState('');
+    name: "",
+    email: "",
+    phone: "",
+    location: "",
+    password: "",
+    confirmPassword: "",
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7101/api';
+    // Professional Details
+    headline: "",
+    bio: "",
+    company: "",
+    position: "",
+    experience: "",
+    category: "",
+
+    // References
+    reference1Name: "",
+    reference1Contact: "",
+    reference2Name: "",
+    reference2Contact: "",
+  });
+
+  const [error, setError] = useState("");
+
+  const API_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:7101/api";
 
   const categories = [
-    'Software Engineering',
-    'Civil Engineering',
-    'Mechanical Engineering',
-    'Electrical Engineering',
-    'Electronics Engineering',
-    'Chemical Engineering',
-    'Computer Engineering',
-    'Architecture',
-    'Other'
+    "Software Engineering",
+    "Civil Engineering",
+    "Mechanical Engineering",
+    "Electrical Engineering",
+    "Electronics Engineering",
+    "Chemical Engineering",
+    "Computer Engineering",
+    "Architecture",
+    "Other",
   ];
 
   const handleInputChange = (e) => {
@@ -58,24 +68,29 @@ export default function UserRegister() {
       ...formData,
       [e.target.name]: e.target.value,
     });
-    setError('');
+    setError("");
   };
 
   const validateStep1 = () => {
-    if (!formData.name || !formData.email || !formData.phone || !formData.location) {
-      setError('Please fill in all personal details');
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.location
+    ) {
+      setError("Please fill in all personal details");
       return false;
     }
     if (!formData.password || !formData.confirmPassword) {
-      setError('Please enter and confirm your password');
+      setError("Please enter and confirm your password");
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return false;
     }
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError("Password must be at least 6 characters long");
       return false;
     }
     return true;
@@ -85,59 +100,57 @@ export default function UserRegister() {
     if (step === 1) {
       if (validateStep1()) {
         setStep(2);
-        setError('');
+        setError("");
       }
     } else if (step === 2) {
       setStep(3);
-      setError('');
+      setError("");
     }
   };
 
   const handlePrevStep = () => {
     setStep(step - 1);
-    setError('');
+    setError("");
   };
 
- const handleRegister = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-  try {
-    const profileData = {
-      phone: formData.phone || "",
-      location: formData.location || "",
-      headline: formData.headline || "",
-      bio: formData.bio || "",
-      company: formData.company || "",
-      position: formData.position || "",
-      skills: Array.isArray(formData.skills) ? formData.skills : [],
-      // ❌ DO NOT SEND experience here
-      // ❌ DO NOT SEND education
-      // ❌ DO NOT SEND references
-      // ❌ DO NOT SEND category
-    };
+    try {
+      const profileData = {
+        phone: formData.phone || "",
+        location: formData.location || "",
+        headline: formData.headline || "",
+        bio: formData.bio || "",
+        company: formData.company || "",
+        position: formData.position || "",
+        skills: Array.isArray(formData.skills) ? formData.skills : [],
+        // ❌ DO NOT SEND experience here
+        // ❌ DO NOT SEND education
+        // ❌ DO NOT SEND references
+        // ❌ DO NOT SEND category
+      };
 
-    const response = await axios.post(`${API_URL}/auth/register`, {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      role: "user",
-      profile: profileData,
-      membershipStatus: "pending",
-    });
+      const response = await axios.post(`${API_URL}/auth/register`, {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: "user",
+        profile: profileData,
+        membershipStatus: "pending",
+      });
 
-    alert("Registration successful! Your account is pending approval.");
-    router.push("/login");
-
-  } catch (err) {
-    console.error("Registration error:", err);
-    setError(err.response?.data?.message || "Registration failed");
-  } finally {
-    setLoading(false);
-  }
-};
-
+      alert("Registration successful! Your account is pending approval.");
+      router.push("/login");
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError(err.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-teal-50 flex items-center justify-center p-4 py-12">
@@ -147,46 +160,69 @@ export default function UserRegister() {
           {/* Header */}
           <div className="bg-gradient-to-r from-teal-500 to-cyan-500 px-8 py-6">
             <div className="flex items-center justify-center mb-4">
-              <img 
-                src="/logo1.png" 
-                alt="KEA Logo" 
+              <img
+                src="/logo1.png"
+                alt="KEA Logo"
                 className="h-20 object-contain"
               />
             </div>
-            <h1 className="text-2xl font-bold text-white text-center mb-2">Become a KEA Member</h1>
+            <h1 className="text-2xl font-bold text-white text-center mb-2">
+              Become a KEA Member
+            </h1>
             <p className="text-sm text-teal-50 text-center">
               Fill out this form to get verified for full search access
             </p>
           </div>
 
           {/* Progress Steps */}
-          <div className="px-8 py-4 bg-gray-50 border-b border-gray-200">
-            <div className="flex items-center justify-between max-w-md mx-auto">
-              <div className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
-                  step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'
-                }`}>
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 max-w-md mx-auto">
+              {/* Step 1 */}
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
+                    step >= 1
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-300 text-gray-600"
+                  }`}
+                >
                   1
                 </div>
-                <span className="ml-2 text-sm font-medium text-gray-700">Personal</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Personal
+                </span>
               </div>
-              <div className={`flex-1 h-1 mx-4 ${step >= 2 ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
-              <div className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
-                  step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'
-                }`}>
+
+              {/* Step 2 */}
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
+                    step >= 2
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-300 text-gray-600"
+                  }`}
+                >
                   2
                 </div>
-                <span className="ml-2 text-sm font-medium text-gray-700">Professional</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Professional
+                </span>
               </div>
-              <div className={`flex-1 h-1 mx-4 ${step >= 3 ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
-              <div className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
-                  step >= 3 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'
-                }`}>
+
+              {/* Step 3 */}
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
+                    step >= 3
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-300 text-gray-600"
+                  }`}
+                >
                   3
                 </div>
-                <span className="ml-2 text-sm font-medium text-gray-700">References</span>
+                <span className="text-sm font-medium text-gray-700">
+                  References
+                </span>
               </div>
             </div>
           </div>
@@ -204,8 +240,10 @@ export default function UserRegister() {
               {/* Step 1: Personal Details */}
               {step === 1 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Personal details</h3>
-                  
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                    Personal details
+                  </h3>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Full Name */}
                     <div>
@@ -258,7 +296,8 @@ export default function UserRegister() {
                     {/* Category */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Engineering Category <span className="text-red-500">*</span>
+                        Engineering Category{" "}
+                        <span className="text-red-500">*</span>
                       </label>
                       <select
                         name="category"
@@ -269,7 +308,9 @@ export default function UserRegister() {
                       >
                         <option value="">Select category</option>
                         {categories.map((cat) => (
-                          <option key={cat} value={cat}>{cat}</option>
+                          <option key={cat} value={cat}>
+                            {cat}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -281,7 +322,7 @@ export default function UserRegister() {
                       </label>
                       <div className="relative">
                         <input
-                          type={showPassword ? 'text' : 'password'}
+                          type={showPassword ? "text" : "password"}
                           name="password"
                           value={formData.password}
                           onChange={handleInputChange}
@@ -295,7 +336,11 @@ export default function UserRegister() {
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         >
-                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          {showPassword ? (
+                            <EyeOff className="w-5 h-5" />
+                          ) : (
+                            <Eye className="w-5 h-5" />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -307,7 +352,7 @@ export default function UserRegister() {
                       </label>
                       <div className="relative">
                         <input
-                          type={showConfirmPassword ? 'text' : 'password'}
+                          type={showConfirmPassword ? "text" : "password"}
                           name="confirmPassword"
                           value={formData.confirmPassword}
                           onChange={handleInputChange}
@@ -318,10 +363,16 @@ export default function UserRegister() {
                         />
                         <button
                           type="button"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         >
-                          {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          {showConfirmPassword ? (
+                            <EyeOff className="w-5 h-5" />
+                          ) : (
+                            <Eye className="w-5 h-5" />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -330,7 +381,8 @@ export default function UserRegister() {
                   {/* Location Full Width */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Location (City, State, Country) <span className="text-red-500">*</span>
+                      Location (City, State, Country){" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -348,8 +400,10 @@ export default function UserRegister() {
               {/* Step 2: Professional Details */}
               {step === 2 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Professional information</h3>
-                  
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                    Professional information
+                  </h3>
+
                   {/* Headline */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -432,9 +486,13 @@ export default function UserRegister() {
               {/* Step 3: References */}
               {step === 3 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">References</h3>
-                  <p className="text-sm text-gray-600 mb-4">Provide two KEA member references (optional but recommended)</p>
-                  
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    References
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Provide two KEA member references (optional but recommended)
+                  </p>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Reference 1 Name */}
                     <div>
@@ -499,7 +557,9 @@ export default function UserRegister() {
 
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
                     <p className="text-sm text-blue-800">
-                      💡 Your application will be reviewed by KEA administrators. You'll receive an email notification once your membership is approved.
+                      💡 Your application will be reviewed by KEA
+                      administrators. You'll receive an email notification once
+                      your membership is approved.
                     </p>
                   </div>
                 </div>
@@ -516,7 +576,7 @@ export default function UserRegister() {
                     ← Back
                   </button>
                 )}
-                
+
                 {step < 3 ? (
                   <button
                     type="button"
@@ -537,7 +597,7 @@ export default function UserRegister() {
                         Submitting...
                       </>
                     ) : (
-                      'Submit Application'
+                      "Submit Application"
                     )}
                   </button>
                 )}
@@ -547,7 +607,10 @@ export default function UserRegister() {
             {/* Login Link */}
             <div className="mt-6 text-center">
               <Link href="/login" className="text-sm text-gray-600">
-                Already have an account? <span className="font-semibold text-blue-600 hover:text-blue-700">Sign in</span>
+                Already have an account?{" "}
+                <span className="font-semibold text-blue-600 hover:text-blue-700">
+                  Sign in
+                </span>
               </Link>
             </div>
           </div>
