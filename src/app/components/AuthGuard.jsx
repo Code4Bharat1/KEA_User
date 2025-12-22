@@ -11,7 +11,7 @@ export default function AuthGuard({ children }) {
     const token = localStorage.getItem("token");
 
     // Public routes
-    if (pathname === "/login" || pathname === "/register") {
+    if (pathname === "/login" || pathname === "/register"|| pathname === "/") {
       return;
     }
 
