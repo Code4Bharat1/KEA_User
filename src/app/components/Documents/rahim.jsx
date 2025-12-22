@@ -80,13 +80,21 @@ export default function DocumentsPage() {
     }
   };
 
-  const handleViewResume = (resume) => {
-    setCurrentPDF({
-      url: getFileUrl(resume.file),
-      name: resume.originalName || resume.title
-    });
-    setShowPDFViewer(true);
-  };
+const handleViewResume = async (resume) => {
+  const token = localStorage.getItem('userToken');
+  const res = await axios.get(
+    `${API_URL}/users/me/resumes/${resume._id}/view`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+
+  setCurrentPDF({
+    url: res.data.url,
+    name: resume.originalName,
+  });
+
+  setShowPDFViewer(true);
+};
+
 
   const handleDownloadResume = (resume) => {
     const url = getFileUrl(resume.file);
@@ -311,7 +319,7 @@ function UploadResumeModal({ onClose, onSuccess }) {
       formData.append('file', file);
       formData.append('title', title);
 
-      await axios.post(`${API_URL}/users/me/resume`, formData, {
+      await axios.post(`${API_URL}/users/me/resumes`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

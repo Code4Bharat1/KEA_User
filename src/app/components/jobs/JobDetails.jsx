@@ -135,7 +135,7 @@ export default function JobDetails() {
           <div className="max-w-5xl mx-auto">
             {/* Back Button */}
             <Link
-              href="/dashboard/jobs"
+              href="/dashboard/Jobs"
               className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
             >
               <ArrowLeft className="w-5 h-5" />

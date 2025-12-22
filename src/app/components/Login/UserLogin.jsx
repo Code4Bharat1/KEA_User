@@ -5,6 +5,7 @@ import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function UserLogin() {
   const router = useRouter();
@@ -27,62 +28,48 @@ export default function UserLogin() {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const response = await axios.post(`${API_URL}/auth/login`, formData);
+  try {
+    const response = await axios.post(`${API_URL}/auth/login`, formData);
+    const { token, user } = response.data;
 
-      const { token, user } = response.data;
-
-      // Check if user role is 'user' (not admin)
-      if (user.role !== "user") {
-        setError(
-          "Invalid credentials. Please use admin login for admin access."
-        );
-        setLoading(false);
-        return;
-      }
-
-      // Check membership status
-      if (user.membershipStatus === "pending") {
-        setError(
-          "Your membership is pending approval. Please wait for admin approval."
-        );
-        setLoading(false);
-        return;
-      }
-
-      if (user.membershipStatus === "inactive") {
-        setError(
-          "Your membership has been deactivated. Please contact support."
-        );
-        setLoading(false);
-        return;
-      }
-
-      // Save token and user data
-      localStorage.setItem("userToken", token);
-      localStorage.setItem(
-        "userData",
-        JSON.stringify({
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          membershipStatus: user.membershipStatus,
-        })
-      );
-
-      // Redirect to user dashboard
-      router.push("/dashboard");
-    } catch (err) {
-      console.error("Login error:", err);
-      setError(err.response?.data?.message || "Invalid email or password");
-    } finally {
-      setLoading(false);
+    if (user.role !== "user") {
+      toast.error("Please use admin login for admin access.");
+      return;
     }
-  };
+
+    if (user.membershipStatus === "pending") {
+      toast.error("Your membership is pending admin approval.");
+      return;
+    }
+
+    if (user.membershipStatus === "inactive") {
+      toast.error("Your membership has been deactivated.");
+      return;
+    }
+
+    localStorage.setItem("userToken", token);
+    localStorage.setItem(
+      "userData",
+      JSON.stringify({
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        membershipStatus: user.membershipStatus,
+      })
+    );
+
+    toast.success("Login successful! Redirecting...");
+    router.push("/dashboard");
+
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Invalid email or password");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-teal-50 flex items-center justify-center p-4">

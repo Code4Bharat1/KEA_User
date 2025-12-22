@@ -10,7 +10,9 @@ import {
   Filter,
   Plus,
   Building2,
-  Calendar
+  Calendar,
+  Bookmark,
+  BookmarkCheck
 } from 'lucide-react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -26,6 +28,8 @@ export default function FindJobs() {
   const [jobs, setJobs] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [savingJob, setSavingJob] = useState(null);
+  const [savedJobIds, setSavedJobIds] = useState([]);
 
   const [filters, setFilters] = useState({
     search: '',
@@ -50,6 +54,7 @@ export default function FindJobs() {
   useEffect(() => {
     fetchUserData();
     fetchJobs();
+    fetchSavedJobs();
   }, []);
 
   const fetchUserData = async () => {
@@ -95,8 +100,39 @@ export default function FindJobs() {
     }
   };
 
+  const fetchSavedJobs = async () => {
+    try {
+      const token = localStorage.getItem('userToken');
+      const res = await axios.get(`${API_URL}/users/jobs/saved`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Extract job IDs from saved jobs
+      const jobIds = res.data.map(saved => saved.job?._id || saved.job);
+      setSavedJobIds(jobIds);
+    } catch (err) {
+      console.error('Error fetching saved jobs:', err);
+    }
+  };
+
   const handleSearch = () => {
     fetchJobs(1);
+  };
+
+  const handleSaveJob = async (jobId) => {
+    setSavingJob(jobId);
+    try {
+      const token = localStorage.getItem('userToken');
+      await axios.post(`${API_URL}/users/jobs/save`, 
+        { jobId },
+        { headers: { Authorization: `Bearer ${token}` }}
+      );
+      setSavedJobIds([...savedJobIds, jobId]);
+      alert('Job saved successfully!');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to save job');
+    } finally {
+      setSavingJob(null);
+    }
   };
 
   const handleFilterChange = (key, value) => {
@@ -152,13 +188,22 @@ export default function FindJobs() {
                   )}
                 </p>
               </div>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-              >
-                <Plus className="w-5 h-5" />
-                Post a Job
-              </button>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/dashboard/saved-jobs"
+                  className="flex items-center gap-2 px-4 py-2 border-2 border-teal-600 text-teal-600 rounded-lg font-semibold hover:bg-teal-50 transition-colors"
+                >
+                  <Bookmark className="w-5 h-5" />
+                  Saved Jobs ({savedJobIds.length})
+                </Link>
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  <Plus className="w-5 h-5" />
+                  Post a Job
+                </button>
+              </div>
             </div>
 
             {/* Search and Filters */}
@@ -240,76 +285,104 @@ export default function FindJobs() {
                   <p className="text-gray-600">Try adjusting your search filters</p>
                 </div>
               ) : (
-                jobs.map((job) => (
-                  <div
-                    key={job._id}
-                    className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <Link
-                          href={`/dashboard/Jobs/${job._id}`}
-                          className="text-xl font-bold text-gray-900 hover:text-teal-600 transition-colors"
-                        >
-                          {job.title}
-                        </Link>
-                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 flex-wrap">
-                          <div className="flex items-center gap-1">
-                            <Building2 className="w-4 h-4" />
-                            <span>{job.company}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <MapPin className="w-4 h-4" />
-                            <span>{job.location}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Briefcase className="w-4 h-4" />
-                            <span>{job.type}</span>
-                          </div>
-                          {job.salary && (
+                jobs.map((job) => {
+                  const isSaved = savedJobIds.includes(job._id);
+                  return (
+                    <div
+                      key={job._id}
+                      className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <Link
+                            href={`/dashboard/Jobs/${job._id}`}
+                            className="text-xl font-bold text-gray-900 hover:text-teal-600 transition-colors"
+                          >
+                            {job.title}
+                          </Link>
+                          <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 flex-wrap">
                             <div className="flex items-center gap-1">
-                              <DollarSign className="w-4 h-4" />
-                              <span>{job.salary}</span>
+                              <Building2 className="w-4 h-4" />
+                              <span>{job.company}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <MapPin className="w-4 h-4" />
+                              <span>{job.location}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Briefcase className="w-4 h-4" />
+                              <span>{job.type}</span>
+                            </div>
+                            {job.salary && (
+                              <div className="flex items-center gap-1">
+                                <DollarSign className="w-4 h-4" />
+                                <span>{job.salary}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <p className="mt-3 text-gray-700 line-clamp-2">{job.description}</p>
+
+                          {job.tags && job.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-3">
+                              {job.tags.slice(0, 5).map((tag, index) => (
+                                <span
+                                  key={index}
+                                  className="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-sm font-medium"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                              {job.tags.length > 5 && (
+                                <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">
+                                  +{job.tags.length - 5} more
+                                </span>
+                              )}
                             </div>
                           )}
                         </div>
 
-                        <p className="mt-3 text-gray-700 line-clamp-2">{job.description}</p>
-
-                        {job.tags && job.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-3">
-                            {job.tags.slice(0, 5).map((tag, index) => (
-                              <span
-                                key={index}
-                                className="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-sm font-medium"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                            {job.tags.length > 5 && (
-                              <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">
-                                +{job.tags.length - 5} more
-                              </span>
-                            )}
+                        <div className="flex flex-col gap-2 shrink-0">
+                          <div className="flex items-center gap-1 text-sm text-gray-500 mb-1">
+                            <Clock className="w-4 h-4" />
+                            <span>{getTimeAgo(job.createdAt)}</span>
                           </div>
-                        )}
-                      </div>
+                          
+                          <Link
+                            href={`/dashboard/Jobs/${job._id}`}
+                            className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center"
+                          >
+                            View Details
+                          </Link>
 
-                      <div className="text-right shrink-0">
-                        <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
-                          <Clock className="w-4 h-4" />
-                          <span>{getTimeAgo(job.createdAt)}</span>
+                          <button
+                            onClick={() => handleSaveJob(job._id)}
+                            disabled={isSaved || savingJob === job._id}
+                            className={`px-6 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${
+                              isSaved
+                                ? 'bg-teal-50 text-teal-700 border border-teal-200 cursor-not-allowed'
+                                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                            }`}
+                          >
+                            {isSaved ? (
+                              <>
+                                <BookmarkCheck className="w-4 h-4" />
+                                Saved
+                              </>
+                            ) : savingJob === job._id ? (
+                              'Saving...'
+                            ) : (
+                              <>
+                                <Bookmark className="w-4 h-4" />
+                                Save Job
+                              </>
+                            )}
+                          </button>
                         </div>
-                        <Link
-                          href={`/dashboard/Jobs/${job._id}`}
-                          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                        >
-                          View Details
-                        </Link>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
 
@@ -326,14 +399,12 @@ export default function FindJobs() {
 
                 {[...Array(pagination.pages)].map((_, index) => {
                   const pageNum = index + 1;
-                  // Show first page, last page, current page, and pages around current
                   const showPage = 
                     pageNum === 1 || 
                     pageNum === pagination.pages || 
                     Math.abs(pageNum - pagination.page) <= 1;
 
                   if (!showPage) {
-                    // Show ellipsis
                     if (pageNum === 2 || pageNum === pagination.pages - 1) {
                       return (
                         <span key={pageNum} className="px-2 text-gray-500">
@@ -386,7 +457,7 @@ export default function FindJobs() {
   );
 }
 
-// Create Job Modal Component (same as before)
+// Create Job Modal Component
 function CreateJobModal({ onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({

@@ -165,7 +165,7 @@ export default function UserSidebar({ isOpen, onClose }) {
             <img 
               src="/logo1.png" 
               alt="KEA Logo" 
-              className="h-12 object-cover"
+              className="h-20 object-cover"
               onError={(e) => {
                 e.target.style.display = 'none';
                 e.target.nextSibling.style.display = 'flex';

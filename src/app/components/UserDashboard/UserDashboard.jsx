@@ -68,9 +68,22 @@ export default function UserDashboard() {
       const res = await axios.get(`${API_URL}/users/dashboard/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log('Stats response:', res.data);
       setStats(res.data);
+      console.log('Stats state updated to:', res.data);
     } catch (err) {
       console.error('Error fetching stats:', err);
+      // Set default stats on error
+      setStats({
+        applications: 0,
+        applicationsChange: 0,
+        savedJobs: 0,
+        savedJobsChange: 0,
+        eventsRegistered: 0,
+        eventsChange: 0,
+        connections: 0,
+        connectionsChange: 0
+      });
     }
   };
 
@@ -80,9 +93,18 @@ export default function UserDashboard() {
       const res = await axios.get(`${API_URL}/users/dashboard/activity`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setRecentActivity(res.data);
+      console.log('Activity response:', res.data);
+      
+      if (res.data && res.data.length > 0) {
+        setRecentActivity(res.data);
+      } else {
+        // No activities yet - show empty state
+        setRecentActivity([]);
+      }
     } catch (err) {
       console.error('Error fetching activity:', err);
+      // Show empty state on error
+      setRecentActivity([]);
     }
   };
 
@@ -92,9 +114,11 @@ export default function UserDashboard() {
       const res = await axios.get(`${API_URL}/users/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setNotifications(res.data);
+      console.log('Notifications response:', res.data);
+      setNotifications(res.data || []);
     } catch (err) {
       console.error('Error fetching notifications:', err);
+      setNotifications([]);
     }
   };
 
@@ -186,6 +210,7 @@ export default function UserDashboard() {
           {/* User Summary */}
           <div className="mb-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Your summary</h2>
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between mb-2">
@@ -194,7 +219,7 @@ export default function UserDashboard() {
                 </div>
                 <p className="text-3xl font-bold text-gray-900">{stats.applications}</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {stats.applicationsChange >= 0 ? '+' : ''}{stats.applicationsChange || 0}% from last month
+                  {stats.applicationsChange >= 0 ? '+' : ''}{stats.applicationsChange}% from last month
                 </p>
               </div>
 
@@ -205,7 +230,7 @@ export default function UserDashboard() {
                 </div>
                 <p className="text-3xl font-bold text-gray-900">{stats.savedJobs}</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {stats.savedJobsChange >= 0 ? '+' : ''}{stats.savedJobsChange || 0}% from last month
+                  {stats.savedJobsChange >= 0 ? '+' : ''}{stats.savedJobsChange}% from last month
                 </p>
               </div>
 
@@ -216,7 +241,7 @@ export default function UserDashboard() {
                 </div>
                 <p className="text-3xl font-bold text-gray-900">{stats.eventsRegistered}</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {stats.eventsChange >= 0 ? '+' : ''}{stats.eventsChange || 0}% from last month
+                  {stats.eventsChange >= 0 ? '+' : ''}{stats.eventsChange}% from last month
                 </p>
               </div>
 
@@ -227,7 +252,7 @@ export default function UserDashboard() {
                 </div>
                 <p className="text-3xl font-bold text-gray-900">{stats.connections}</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {stats.connectionsChange >= 0 ? '+' : ''}{stats.connectionsChange || 0}% from last month
+                  {stats.connectionsChange >= 0 ? '+' : ''}{stats.connectionsChange}% from last month
                 </p>
               </div>
             </div>
@@ -328,7 +353,8 @@ export default function UserDashboard() {
                   ) : (
                     <div className="text-center py-8">
                       <TrendingUp className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p className="text-sm text-gray-500">No recent activity</p>
+                      <p className="text-sm font-medium text-gray-500 mb-1">No recent activity</p>
+                      <p className="text-xs text-gray-400">Start applying for jobs or registering for events!</p>
                     </div>
                   )}
                 </div>
@@ -403,8 +429,8 @@ export default function UserDashboard() {
               {notifications.length === 0 && (
                 <>
                   <div className="bg-green-50 rounded-lg border border-green-200 p-6">
-                    <h3 className="text-sm font-bold text-green-900 mb-2">Membership updated</h3>
-                    <p className="text-sm text-green-800">Your membership has been successfully renewed.</p>
+                    <h3 className="text-sm font-bold text-green-900 mb-2">Membership Active</h3>
+                    <p className="text-sm text-green-800">Your KEA membership is active and in good standing.</p>
                   </div>
 
                   <div className="bg-blue-50 rounded-lg border border-blue-200 p-6">

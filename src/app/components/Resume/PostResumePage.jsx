@@ -77,7 +77,7 @@ export default function PostResume() {
   const fetchResumes = async () => {
     try {
       const token = localStorage.getItem("userToken");
-      const res = await axios.get(`${API_URL}/users/me/resumes`, {
+      const res = await axios.get(`${API_URL}/users/me/resume`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setResumes(res.data);
