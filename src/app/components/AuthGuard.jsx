@@ -8,7 +8,7 @@ export default function AuthGuard({ children }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("userToken");
 
     // Public routes
     if (pathname === "/login" || pathname === "/register"|| pathname === "/") {
