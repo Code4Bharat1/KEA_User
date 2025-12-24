@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Upload, 
-  FileText, 
-  Trash2, 
+import {
+  Upload,
+  FileText,
+  Trash2,
   Download,
   Eye,
   Plus,
@@ -27,7 +27,7 @@ export default function DocumentsPage() {
   const [currentPDF, setCurrentPDF] = useState(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  
+
   const getFileUrl = (filename) => {
     const baseUrl = API_URL.replace('/api', '');
     return `${baseUrl}/uploads/${filename}`;
@@ -80,31 +80,53 @@ export default function DocumentsPage() {
     }
   };
 
-const handleViewResume = async (resume) => {
-  const token = localStorage.getItem('userToken');
-  const res = await axios.get(
-    `${API_URL}/users/me/resumes/${resume._id}/view`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+  const handleViewResume = async (resume) => {
+    try {
+      const token = localStorage.getItem('userToken');
 
-  setCurrentPDF({
-    url: res.data.url,
-    name: resume.originalName,
-  });
+      const res = await axios.get(
+        `${API_URL}/users/me/resumes/${resume._id}/view`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-  setShowPDFViewer(true);
-};
+      setCurrentPDF({
+        url: res.data.url,        // ✅ SIGNED WASABI URL
+        name: resume.originalName,
+      });
 
-
-  const handleDownloadResume = (resume) => {
-    const url = getFileUrl(resume.file);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = resume.originalName || 'resume.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      setShowPDFViewer(true);
+    } catch (err) {
+      console.error('View resume error:', err);
+      alert('Failed to open resume');
+    }
   };
+
+
+  const handleDownloadResume = async (resume) => {
+    try {
+      const token = localStorage.getItem('userToken');
+
+      const res = await axios.get(
+        `${API_URL}/users/me/resumes/${resume._id}/view`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const link = document.createElement('a');
+      link.href = res.data.url;
+      link.download = resume.originalName || 'resume';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Download error:', err);
+      alert('Failed to download resume');
+    }
+  };
+
 
   const formatFileSize = (bytes) => {
     if (!bytes) return 'N/A';
@@ -196,13 +218,15 @@ const handleViewResume = async (resume) => {
                         <Eye className="w-4 h-4" />
                         View
                       </button>
-                      <button
+
+                      {/* <button
                         onClick={() => handleDownloadResume(resume)}
                         className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-50 text-green-600 rounded-lg font-medium hover:bg-green-100 transition-colors"
                       >
                         <Download className="w-4 h-4" />
                         Download
-                      </button>
+                      </button> */}
+
                       <button
                         onClick={() => handleDeleteResume(resume._id)}
                         className="px-4 py-2 bg-red-50 text-red-600 rounded-lg font-medium hover:bg-red-100 transition-colors"
@@ -210,6 +234,7 @@ const handleViewResume = async (resume) => {
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
+
                   </div>
                 ))}
               </div>
@@ -376,11 +401,10 @@ function UploadResumeModal({ onClose, onSuccess }) {
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                dragActive
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${dragActive
                   ? 'border-teal-500 bg-teal-50'
                   : 'border-gray-300 hover:border-gray-400'
-              }`}
+                }`}
             >
               <input
                 type="file"

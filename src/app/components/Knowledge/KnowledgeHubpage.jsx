@@ -1,18 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Bell, 
-  FileText, 
-  Video, 
-  Link2, 
-  Image, 
-  X, 
-  Plus, 
-  Upload, 
-  Loader, 
-  ArrowLeft,
+import {
+  Search,
+  FileText,
+  Video,
+  Link2,
+  Image,
+  X,
+  Plus,
+  Upload,
+  Loader,
   Filter,
   ChevronDown
 } from 'lucide-react';
@@ -20,6 +18,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import UserSidebar from '../layout/sidebar';
 import UserNavbar from '../layout/navbar';
+import FileViewer from './Fileviewer';
 
 export default function KnowledgeHub() {
   const router = useRouter();
@@ -35,6 +34,8 @@ export default function KnowledgeHub() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [uploadType, setUploadType] = useState('link');
+  const [showViewer, setShowViewer] = useState(false);
+  const [currentFile, setCurrentFile] = useState(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -109,15 +110,20 @@ export default function KnowledgeHub() {
       const token = localStorage.getItem('userToken');
 
       const resourceData = {
-        ...newResource,
+        title: newResource.title,
+        category: newResource.category,
+        format: newResource.format,
+        externalLink: newResource.link,
         tags: Array.isArray(newResource.tags)
           ? newResource.tags
           : typeof newResource.tags === 'string'
           ? newResource.tags.split(',').map(tag => tag.trim()).filter(Boolean)
-          : []
+          : [],
+        description: newResource.description,
+        author: newResource.author || 'Anonymous'
       };
 
-      await axios.post(`${API_URL}/resources/`, resourceData, {
+      await axios.post(`${API_URL}/resources`, resourceData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -127,7 +133,8 @@ export default function KnowledgeHub() {
       fetchCategories();
       alert('Resource created successfully!');
     } catch (error) {
-      alert(error.response?.data?.message || 'Failed to create resource');
+      console.error('Create resource error:', error);
+      alert(error.response?.data?.error || error.response?.data?.message || 'Failed to create resource');
     } finally {
       setLoading(false);
     }
@@ -145,7 +152,7 @@ export default function KnowledgeHub() {
     formData.append('category', newResource.category);
     formData.append('tags', newResource.tags);
     formData.append('description', newResource.description);
-    formData.append('author', newResource.author);
+    formData.append('author', newResource.author || 'Anonymous');
 
     try {
       const token = localStorage.getItem('userToken');
@@ -162,7 +169,8 @@ export default function KnowledgeHub() {
       fetchCategories();
       alert('File uploaded successfully!');
     } catch (error) {
-      alert(error.response?.data?.message || 'Failed to upload file');
+      console.error('Upload error:', error);
+      alert(error.response?.data?.error || error.response?.data?.message || 'Failed to upload file');
     } finally {
       setLoading(false);
     }
@@ -179,10 +187,57 @@ export default function KnowledgeHub() {
       author: ''
     });
     setFile(null);
+    setUploadType('link');
   };
 
-  const handleResourceClick = (link) => {
-    window.open(link, '_blank', 'noopener,noreferrer');
+  const handleResourceClick = async (resource) => {
+    // Link / Video → open in new tab
+    if (resource.format === 'Link' || resource.format === 'Video') {
+      if (!resource.externalLink) {
+        alert('Invalid resource link');
+        return;
+      }
+      window.open(resource.externalLink, '_blank');
+      return;
+    }
+
+    // File missing
+    if (!resource.wasabiKey) {
+      alert('File not available for viewing');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('userToken');
+      
+      const { data } = await axios.get(
+        `${API_URL}/resources/${resource._id}/view`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (!data?.url) {
+        throw new Error('No URL received');
+      }
+
+      // Use proxy URL for PDFs to avoid CORS issues
+      const fileUrl = resource.format === 'PDF' && data.proxyUrl 
+        ? data.proxyUrl 
+        : data.url;
+
+      // Set file for viewer
+      setCurrentFile({
+        url: fileUrl,
+        name: resource.title,
+        format: resource.format,
+      });
+      setShowViewer(true);
+    } catch (err) {
+      console.error('View error:', err);
+      alert(err.response?.data?.error || 'Failed to view file. The file may be blocked by your browser security settings.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getIconComponent = (format) => {
@@ -191,7 +246,8 @@ export default function KnowledgeHub() {
       'DOCX': FileText,
       'Video': Video,
       'Link': Link2,
-      'Images': Image
+      'Images': Image,
+      'File': FileText
     };
     return icons[format] || FileText;
   };
@@ -203,6 +259,19 @@ export default function KnowledgeHub() {
       <div className="flex-1 overflow-auto">
         <UserNavbar onMenuClick={() => setSidebarOpen(true)} user={user} />
 
+        {/* File Viewer Modal */}
+        {showViewer && currentFile && (
+          <FileViewer
+            fileUrl={currentFile.url}
+            fileName={currentFile.name}
+            format={currentFile.format}
+            onClose={() => {
+              setShowViewer(false);
+              setCurrentFile(null);
+            }}
+          />
+        )}
+
         {/* Create Resource Modal */}
         {showCreateModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -210,21 +279,27 @@ export default function KnowledgeHub() {
               <div className="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between rounded-t-xl">
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Create New Resource</h2>
                 <button
-                  onClick={() => setShowCreateModal(false)}
+                  onClick={() => {
+                    setShowCreateModal(false);
+                    resetForm();
+                  }}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              
+
               <div className="px-4 sm:px-6 pt-4">
                 <div className="flex gap-2 mb-4">
                   <button
                     type="button"
-                    onClick={() => setUploadType('link')}
+                    onClick={() => {
+                      setUploadType('link');
+                      setNewResource({ ...newResource, format: '' });
+                    }}
                     className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors ${
-                      uploadType === 'link' 
-                        ? 'bg-blue-600 text-white' 
+                      uploadType === 'link'
+                        ? 'bg-blue-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -232,10 +307,13 @@ export default function KnowledgeHub() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setUploadType('file')}
+                    onClick={() => {
+                      setUploadType('file');
+                      setNewResource({ ...newResource, format: '' });
+                    }}
                     className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors ${
-                      uploadType === 'file' 
-                        ? 'bg-blue-600 text-white' 
+                      uploadType === 'file'
+                        ? 'bg-blue-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -253,7 +331,7 @@ export default function KnowledgeHub() {
                     type="text"
                     required
                     value={newResource.title}
-                    onChange={(e) => setNewResource({...newResource, title: e.target.value})}
+                    onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
                     placeholder="e.g., Bridge Design Checklist"
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   />
@@ -267,7 +345,7 @@ export default function KnowledgeHub() {
                     <select
                       required
                       value={newResource.category}
-                      onChange={(e) => setNewResource({...newResource, category: e.target.value})}
+                      onChange={(e) => setNewResource({ ...newResource, category: e.target.value })}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                     >
                       <option value="">Select category</option>
@@ -287,15 +365,12 @@ export default function KnowledgeHub() {
                       <select
                         required
                         value={newResource.format}
-                        onChange={(e) => setNewResource({...newResource, format: e.target.value})}
+                        onChange={(e) => setNewResource({ ...newResource, format: e.target.value })}
                         className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                       >
                         <option value="">Select format</option>
-                        <option value="PDF">PDF</option>
-                        <option value="DOCX">DOCX</option>
-                        <option value="Video">Video</option>
                         <option value="Link">Link</option>
-                        <option value="Images">Images</option>
+                        <option value="Video">Video</option>
                       </select>
                     </div>
                   )}
@@ -307,7 +382,7 @@ export default function KnowledgeHub() {
                     <input
                       type="text"
                       value={newResource.author}
-                      onChange={(e) => setNewResource({...newResource, author: e.target.value})}
+                      onChange={(e) => setNewResource({ ...newResource, author: e.target.value })}
                       placeholder="Your name or organization"
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                     />
@@ -321,7 +396,7 @@ export default function KnowledgeHub() {
                   <input
                     type="text"
                     value={newResource.tags}
-                    onChange={(e) => setNewResource({...newResource, tags: e.target.value})}
+                    onChange={(e) => setNewResource({ ...newResource, tags: e.target.value })}
                     placeholder="e.g., Template, Civil, Guide"
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   />
@@ -336,7 +411,7 @@ export default function KnowledgeHub() {
                       type="url"
                       required
                       value={newResource.link}
-                      onChange={(e) => setNewResource({...newResource, link: e.target.value})}
+                      onChange={(e) => setNewResource({ ...newResource, link: e.target.value })}
                       placeholder="https://example.com/resource"
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                     />
@@ -358,7 +433,7 @@ export default function KnowledgeHub() {
                     </div>
                     {file && (
                       <p className="text-sm text-gray-600 mt-2">
-                        Selected: {file.name} ({(file.size / 1024).toFixed(1)} KB)
+                        Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
                       </p>
                     )}
                   </div>
@@ -370,7 +445,7 @@ export default function KnowledgeHub() {
                   </label>
                   <textarea
                     value={newResource.description}
-                    onChange={(e) => setNewResource({...newResource, description: e.target.value})}
+                    onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
                     placeholder="Brief description of the resource..."
                     rows={4}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
@@ -388,7 +463,10 @@ export default function KnowledgeHub() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setShowCreateModal(false)}
+                    onClick={() => {
+                      setShowCreateModal(false);
+                      resetForm();
+                    }}
                     disabled={loading}
                     className="flex-1 sm:flex-none px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium disabled:opacity-50 transition-colors"
                   >
@@ -470,7 +548,10 @@ export default function KnowledgeHub() {
                   type="text"
                   placeholder="Search resources..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(1);
+                  }}
                   className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 />
               </div>
@@ -529,7 +610,7 @@ export default function KnowledgeHub() {
                       {loading ? 'Loading...' : `Showing ${resources.length} results`}
                     </p>
                   </div>
-                  
+
                   {loading ? (
                     <div className="p-12 flex items-center justify-center">
                       <Loader className="w-8 h-8 animate-spin text-blue-600" />
@@ -538,7 +619,7 @@ export default function KnowledgeHub() {
                     <div className="p-12 text-center text-gray-500">
                       <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                       <p className="font-medium mb-1">No resources found</p>
-                      <p className="text-sm">Create one to get started!</p>
+                      <p className="text-sm">Try adjusting your search or filters</p>
                     </div>
                   ) : (
                     <div className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -547,7 +628,7 @@ export default function KnowledgeHub() {
                         return (
                           <div
                             key={resource._id}
-                            onClick={() => handleResourceClick(resource.link)}
+                            onClick={() => handleResourceClick(resource)}
                             className="border border-gray-200 rounded-xl p-4 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer group"
                           >
                             <div className="flex items-start gap-3 mb-3">
@@ -561,7 +642,7 @@ export default function KnowledgeHub() {
                                 <p className="text-xs text-gray-500">{resource.format}</p>
                               </div>
                             </div>
-                            
+
                             {resource.tags && resource.tags.length > 0 && (
                               <div className="flex flex-wrap gap-2 mb-3">
                                 {resource.tags.slice(0, 3).map((tag, idx) => (
@@ -579,10 +660,15 @@ export default function KnowledgeHub() {
                                 )}
                               </div>
                             )}
-                            
+
                             <div className="flex items-center justify-between text-xs text-gray-500">
                               <span className="truncate flex-1 mr-2">{resource.author || 'Anonymous'}</span>
-                              <span className="flex-shrink-0">{new Date(resource.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                              <span className="flex-shrink-0">
+                                {new Date(resource.createdAt).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric'
+                                })}
+                              </span>
                             </div>
                           </div>
                         );

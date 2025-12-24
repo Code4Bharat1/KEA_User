@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { X, Download, ZoomIn, ZoomOut } from 'lucide-react';
 
-export default function DocumentViewer({ fileUrl, fileName, onClose }) {
+export default function PDFViewer({ fileUrl, fileName, onClose }) {
   const [zoom, setZoom] = useState(100);
 
   const ext = fileName?.split('.').pop()?.toLowerCase();
@@ -55,6 +55,7 @@ export default function DocumentViewer({ fileUrl, fileName, onClose }) {
           src={viewerUrl}
           className="w-full h-full"
           title={fileName}
+          allow="fullscreen"
         />
       </div>
     </div>
