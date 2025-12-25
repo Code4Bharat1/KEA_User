@@ -113,7 +113,7 @@ export default function BlogList() {
 
       setShowCreateModal(false);
       resetForm();
-      alert('Blog submitted for review!');
+      alert('Blog Content Successfully Uploaded!');
       fetchBlogs();
     } catch (error) {
       alert(error.response?.data?.message || 'Failed to create blog');

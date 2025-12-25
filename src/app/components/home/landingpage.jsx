@@ -161,7 +161,7 @@ export default function KEALandingPage() {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
-              {["Home", "About", "Career Portal", "Knowledge Hub", "Events", "Contact"].map(
+              {["Home", "About KEA", "Career Portal", "Knowledge Hub", "Events", "Contact"].map(
                 (item, index) => (
                   <Link
                     key={index}
@@ -204,7 +204,7 @@ export default function KEALandingPage() {
         {mobileMenuOpen && (
           <div className="lg:hidden bg-white border-t border-gray-200 shadow-xl">
             <div className="px-4 py-6 space-y-2 max-h-[calc(100vh-80px)] overflow-y-auto">
-              {["Home", "About", "Career Portal", "Knowledge Hub", "Events", "Contact"].map(
+              {["Home", "About KEA", "Career Portal", "Knowledge Hub", "Events", "Contact"].map(
                 (item, index) => (
                   <Link
                     key={index}
@@ -585,7 +585,7 @@ export default function KEALandingPage() {
             <div>
               <h3 className="text-lg font-bold mb-4">Company</h3>
               <ul className="space-y-3">
-                {["About Us", "Career Portal", "Events", "Contact"].map((item, index) => (
+                {["About KEA", "Career Portal", "Events", "Contact"].map((item, index) => (
                   <li key={index}>
                     <Link
                       href={`#${item.toLowerCase().replace(" ", "-")}`}
