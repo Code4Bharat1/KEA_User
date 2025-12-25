@@ -113,7 +113,7 @@ export default function KnowledgeHub() {
         title: newResource.title,
         category: newResource.category,
         format: newResource.format,
-        externalLink: newResource.link,
+        externalLink: newResource.link || undefined, // Only include if provided
         tags: Array.isArray(newResource.tags)
           ? newResource.tags
           : typeof newResource.tags === 'string'
@@ -131,7 +131,7 @@ export default function KnowledgeHub() {
       resetForm();
       fetchResources();
       fetchCategories();
-      alert('Resource created successfully!');
+      alert('Resource submitted successfully! It will be visible after admin approval.');
     } catch (error) {
       console.error('Create resource error:', error);
       alert(error.response?.data?.error || error.response?.data?.message || 'Failed to create resource');
@@ -167,7 +167,7 @@ export default function KnowledgeHub() {
       resetForm();
       fetchResources();
       fetchCategories();
-      alert('File uploaded successfully!');
+      alert('File uploaded successfully! It will be visible after admin approval.');
     } catch (error) {
       console.error('Upload error:', error);
       alert(error.response?.data?.error || error.response?.data?.message || 'Failed to upload file');
@@ -190,54 +190,39 @@ export default function KnowledgeHub() {
     setUploadType('link');
   };
 
-  const handleResourceClick = async (resource) => {
-    // Link / Video → open in new tab
+  const handleResourceClick = (resource) => {
+    // 🔗 External links
     if (resource.format === 'Link' || resource.format === 'Video') {
-      if (!resource.externalLink) {
-        alert('Invalid resource link');
-        return;
-      }
       window.open(resource.externalLink, '_blank');
       return;
     }
 
-    // File missing
+    // ❌ No file
     if (!resource.wasabiKey) {
-      alert('File not available for viewing');
+      alert('File not available');
       return;
     }
 
-    try {
-      setLoading(true);
-      const token = localStorage.getItem('userToken');
-      
-      const { data } = await axios.get(
+    // 🔥 PDF → DIRECT OPEN (NO AXIOS)
+    if (resource.format === 'PDF') {
+      window.open(
         `${API_URL}/resources/${resource._id}/view`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        '_blank'
       );
-
-      if (!data?.url) {
-        throw new Error('No URL received');
-      }
-
-      // Use proxy URL for PDFs to avoid CORS issues
-      const fileUrl = resource.format === 'PDF' && data.proxyUrl 
-        ? data.proxyUrl 
-        : data.url;
-
-      // Set file for viewer
-      setCurrentFile({
-        url: fileUrl,
-        name: resource.title,
-        format: resource.format,
-      });
-      setShowViewer(true);
-    } catch (err) {
-      console.error('View error:', err);
-      alert(err.response?.data?.error || 'Failed to view file. The file may be blocked by your browser security settings.');
-    } finally {
-      setLoading(false);
+      return;
     }
+
+    // 🖼️ Images / DOCX → signed URL
+    axios
+      .get(`${API_URL}/resources/${resource._id}/view`)
+      .then(res => {
+        if (res.data?.url) {
+          window.open(res.data.url, '_blank');
+        } else {
+          alert('Unable to open file');
+        }
+      })
+      .catch(() => alert('Failed to view file'));
   };
 
   const getIconComponent = (format) => {
@@ -324,7 +309,7 @@ export default function KnowledgeHub() {
 
               <form onSubmit={uploadType === 'link' ? handleCreateResource : handleFileUpload} className="p-4 sm:p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Resource Title <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -333,22 +318,22 @@ export default function KnowledgeHub() {
                     value={newResource.title}
                     onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
                     placeholder="e.g., Bridge Design Checklist"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Category <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Engineering Discipline <span className="text-red-500">*</span>
                     </label>
                     <select
                       required
                       value={newResource.category}
                       onChange={(e) => setNewResource({ ...newResource, category: e.target.value })}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900"
                     >
-                      <option value="">Select category</option>
+                      <option value="">Select discipline</option>
                       <option value="Career guidance">Career guidance</option>
                       <option value="Technical papers">Technical papers</option>
                       <option value="Project reports">Project reports</option>
@@ -359,14 +344,14 @@ export default function KnowledgeHub() {
 
                   {uploadType === 'link' && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-900 mb-2">
                         Format <span className="text-red-500">*</span>
                       </label>
                       <select
                         required
                         value={newResource.format}
                         onChange={(e) => setNewResource({ ...newResource, format: e.target.value })}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900"
                       >
                         <option value="">Select format</option>
                         <option value="Link">Link</option>
@@ -376,7 +361,7 @@ export default function KnowledgeHub() {
                   )}
 
                   <div className={uploadType === 'link' ? '' : 'sm:col-span-2'}>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       Author
                     </label>
                     <input
@@ -384,13 +369,13 @@ export default function KnowledgeHub() {
                       value={newResource.author}
                       onChange={(e) => setNewResource({ ...newResource, author: e.target.value })}
                       placeholder="Your name or organization"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Tags (comma separated)
                   </label>
                   <input
@@ -398,27 +383,32 @@ export default function KnowledgeHub() {
                     value={newResource.tags}
                     onChange={(e) => setNewResource({ ...newResource, tags: e.target.value })}
                     placeholder="e.g., Template, Civil, Guide"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
                   />
                 </div>
 
                 {uploadType === 'link' ? (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Resource Link/URL <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Resource Link/URL {newResource.format === 'Link' && <span className="text-red-500">*</span>}
                     </label>
                     <input
                       type="url"
-                      required
+                      required={newResource.format === 'Link'}
                       value={newResource.link}
                       onChange={(e) => setNewResource({ ...newResource, link: e.target.value })}
                       placeholder="https://example.com/resource"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-900 placeholder-gray-500"
                     />
+                    {newResource.format !== 'Link' && (
+                      <p className="text-xs text-gray-600 mt-1">
+                        Optional for video resources
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       Upload File <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center gap-3">
@@ -426,13 +416,13 @@ export default function KnowledgeHub() {
                         type="file"
                         required
                         onChange={(e) => setFile(e.target.files[0])}
-                        className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                        className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 text-gray-900"
                         accept=".pdf,.docx,.doc,.mp4,.jpg,.jpeg,.png"
                       />
                       <Upload className="w-5 h-5 text-gray-400 flex-shrink-0" />
                     </div>
                     {file && (
-                      <p className="text-sm text-gray-600 mt-2">
+                      <p className="text-sm text-gray-900 mt-2">
                         Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
                       </p>
                     )}
@@ -440,7 +430,7 @@ export default function KnowledgeHub() {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Description
                   </label>
                   <textarea
@@ -448,8 +438,25 @@ export default function KnowledgeHub() {
                     onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
                     placeholder="Brief description of the resource..."
                     rows={4}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm text-gray-900 placeholder-gray-500"
                   />
+                </div>
+
+                {/* Admin Approval Notice */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0">
+                      <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-blue-900">Admin Approval Required</p>
+                      <p className="text-xs text-blue-700 mt-1">
+                        Your submitted resource will be reviewed by an administrator before it becomes visible to all users.
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 pt-4">
@@ -459,7 +466,7 @@ export default function KnowledgeHub() {
                     className="flex-1 sm:flex-none px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
                   >
                     {loading && <Loader className="w-4 h-4 animate-spin" />}
-                    {uploadType === 'link' ? 'Create Resource' : 'Upload File'}
+                    {uploadType === 'link' ? 'Submit Resource' : 'Submit File'}
                   </button>
                   <button
                     type="button"

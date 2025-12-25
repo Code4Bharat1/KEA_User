@@ -1,5 +1,4 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { 
   Search, 
@@ -8,9 +7,10 @@ import {
   Lock,
   Globe,
   Filter,
-  Grid,
-  List as ListIcon,
-  MessageSquare
+  AlertCircle,
+  CheckCircle,
+  XCircle,
+  Clock
 } from 'lucide-react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -30,6 +30,7 @@ export default function GroupsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [myPendingGroups, setMyPendingGroups] = useState([]);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -46,6 +47,7 @@ export default function GroupsList() {
     fetchUserData();
     fetchGroups();
     fetchCategories();
+    fetchMyPendingGroups();
   }, [selectedCategory, searchQuery, filterType, currentPage]);
 
   const fetchUserData = async () => {
@@ -59,6 +61,29 @@ export default function GroupsList() {
       console.error('Error fetching user:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchMyPendingGroups = async () => {
+    try {
+      const token = localStorage.getItem('userToken');
+      const { data } = await axios.get(`${API_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Fetch all groups and filter by creator
+      const allGroupsRes = await axios.get(`${API_URL}/admin/groups?status=pending`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const myPending = allGroupsRes.data.groups?.filter(
+        g => g.creator?._id === data._id && g.approvalStatus === 'pending'
+      ) || [];
+      
+      setMyPendingGroups(myPending);
+    } catch (err) {
+      // User doesn't have access or no pending groups
+      setMyPendingGroups([]);
     }
   };
 
@@ -110,8 +135,21 @@ export default function GroupsList() {
 
       setShowCreateModal(false);
       resetForm();
-      router.push(`/dashboard/groups/${data._id}`);
+      
+      // Show success message based on admin status
+      if (user.role === 'admin') {
+        alert('Group created and approved successfully!');
+        if (data.group?._id) {
+          router.push(`/dashboard/groups/${data.group._id}`);
+        }
+      } else {
+        alert('Group submitted for admin approval! You will be notified once it\'s reviewed.');
+        fetchMyPendingGroups();
+      }
+      
+      fetchGroups();
     } catch (error) {
+      console.error('❌ Error creating group:', error);
       alert(error.response?.data?.message || 'Failed to create group');
     } finally {
       setLoading(false);
@@ -156,12 +194,74 @@ export default function GroupsList() {
     }
   };
 
+  const getStatusBadge = (status) => {
+    const badges = {
+      pending: {
+        icon: Clock,
+        text: 'Pending Review',
+        className: 'bg-yellow-50 text-yellow-700 border-yellow-200'
+      },
+      approved: {
+        icon: CheckCircle,
+        text: 'Approved',
+        className: 'bg-green-50 text-green-700 border-green-200'
+      },
+      rejected: {
+        icon: XCircle,
+        text: 'Rejected',
+        className: 'bg-red-50 text-red-700 border-red-200'
+      }
+    };
+    
+    const badge = badges[status] || badges.pending;
+    const Icon = badge.icon;
+    
+    return (
+      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium ${badge.className}`}>
+        <Icon className="w-3.5 h-3.5" />
+        {badge.text}
+      </span>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <UserSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex-1 overflow-auto">
         <UserNavbar onMenuClick={() => setSidebarOpen(true)} user={user} />
+
+        {/* Pending Groups Banner */}
+        {myPendingGroups.length > 0 && (
+          <div className="bg-yellow-50 border-b border-yellow-200">
+            <div className="max-w-7xl mx-auto px-6 py-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h3 className="text-sm font-semibold text-yellow-900 mb-1">
+                    Groups Awaiting Approval ({myPendingGroups.length})
+                  </h3>
+                  <div className="space-y-2">
+                    {myPendingGroups.map(group => (
+                      <div key={group._id} className="flex items-center justify-between bg-white rounded-lg p-3 border border-yellow-200">
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900">{group.name}</p>
+                          <p className="text-xs text-gray-600 line-clamp-1">{group.description}</p>
+                        </div>
+                        <div className="ml-3">
+                          {getStatusBadge(group.approvalStatus)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-yellow-700 mt-2">
+                    Your group requests are being reviewed by administrators. You'll be notified once approved.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Create Group Modal */}
         {showCreateModal && (
@@ -174,56 +274,81 @@ export default function GroupsList() {
                 </button>
               </div>
 
+              {/* Admin Approval Notice for Non-Admin Users */}
+              {user?.role !== 'admin' && (
+                <div className="px-6 pt-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-blue-900">Admin Approval Required</p>
+                        <p className="text-xs text-blue-700 mt-1">
+                          Your group request will be reviewed by administrators before it becomes visible to other members.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <form onSubmit={handleCreateGroup} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Group Name *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    Group Name <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     required
                     value={newGroup.name}
                     onChange={(e) => setNewGroup({...newGroup, name: e.target.value})}
                     placeholder="e.g., Civil Engineering Group"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    Description <span className="text-red-500">*</span>
+                  </label>
                   <textarea
                     required
                     value={newGroup.description}
                     onChange={(e) => setNewGroup({...newGroup, description: e.target.value})}
                     placeholder="What is this group about?"
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-gray-900"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Category <span className="text-red-500">*</span>
+                    </label>
                     <select
                       required
                       value={newGroup.category}
                       onChange={(e) => setNewGroup({...newGroup, category: e.target.value})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     >
                       <option value="">Select category</option>
-                      <option value="Any Student">Any Student</option>
-                      <option value="Any location">Any location</option>
+                      <option value="General">General</option>
                       <option value="Discipline-based">Discipline-based</option>
                       <option value="Interest-based">Interest-based</option>
+                      <option value="Career-focused">Career-focused</option>
                       <option value="City chapters">City chapters</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Type *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Type <span className="text-red-500">*</span>
+                    </label>
                     <select
                       required
                       value={newGroup.type}
                       onChange={(e) => setNewGroup({...newGroup, type: e.target.value})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     >
                       <option value="public">Public</option>
                       <option value="private">Private</option>
@@ -232,24 +357,28 @@ export default function GroupsList() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Discipline</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Discipline
+                    </label>
                     <input
                       type="text"
                       value={newGroup.discipline}
                       onChange={(e) => setNewGroup({...newGroup, discipline: e.target.value})}
                       placeholder="e.g., Civil Engineering"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Region</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Region
+                    </label>
                     <input
                       type="text"
                       value={newGroup.region}
                       onChange={(e) => setNewGroup({...newGroup, region: e.target.value})}
                       placeholder="e.g., Mumbai"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     />
                   </div>
                 </div>
@@ -260,7 +389,7 @@ export default function GroupsList() {
                     disabled={loading}
                     className="flex-1 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50"
                   >
-                    {loading ? 'Creating...' : 'Create Group'}
+                    {loading ? 'Submitting...' : (user?.role === 'admin' ? 'Create Group' : 'Submit for Review')}
                   </button>
                   <button
                     type="button"
@@ -326,7 +455,7 @@ export default function GroupsList() {
 
               {/* Filter Pills */}
               <div className="flex flex-wrap gap-2 mt-4">
-                {['All groups', 'Any groups', 'Discipline-based', 'Interest-based', 'City chapters'].map((cat) => (
+                {['All groups', 'General', 'Discipline-based', 'Interest-based', 'Career-focused', 'City chapters'].map((cat) => (
                   <button
                     key={cat}
                     onClick={() => {

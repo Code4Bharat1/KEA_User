@@ -49,12 +49,12 @@ export default function UserSidebar({ isOpen, onClose }) {
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
     { icon: User, label: 'My Profile', href: '/dashboard/profile' },
-    { icon: FileText, label: 'My Documents', href: '/dashboard/documents' },
+    // { icon: FileText, label: 'My Documents', href: '/dashboard/documents' },
   ];
 
   const engineeringItems = [
     { icon: Briefcase, label: 'Find Jobs', href: '/dashboard/Jobs' },
-    { icon: FileText, label: 'Find Resumes', href: '/dashboard/resumes' },
+    // { icon: FileText, label: 'Find Resumes', href: '/dashboard/resumes' },
     // { icon: Users, label: 'Networking', href: '/dashboard/networking' },
   ];
 

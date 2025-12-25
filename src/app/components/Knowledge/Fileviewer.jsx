@@ -39,6 +39,10 @@ export default function FileViewer({ fileUrl, fileName, format, onClose }) {
   // Determine viewer URL based on format
   const getViewerUrl = () => {
     if (format === 'PDF') {
+      // For proxy URLs, we need to fetch and create blob URL
+      if (fileUrl.includes('proxy=true')) {
+        return fileUrl; // Will be handled by iframe directly
+      }
       return `${fileUrl}#zoom=${zoom}`;
     } else if (format === 'DOCX' || format === 'DOC') {
       // Google Docs Viewer for Word documents

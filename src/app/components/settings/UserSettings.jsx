@@ -198,34 +198,34 @@ export default function UserSettings() {
     }
   };
 
-  const handleDeleteAccount = async () => {
-    if (!deletePassword) {
-      alert('Please enter your password to confirm deletion');
-      return;
-    }
+  // const handleDeleteAccount = async () => {
+  //   if (!deletePassword) {
+  //     alert('Please enter your password to confirm deletion');
+  //     return;
+  //   }
 
-    if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      return;
-    }
+  //   if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+  //     return;
+  //   }
 
-    setLoading(true);
+  //   setLoading(true);
 
-    try {
-      const token = localStorage.getItem('userToken');
-      await axios.delete(`${API_URL}/settings/user/account`, {
-        headers: { Authorization: `Bearer ${token}` },
-        data: { password: deletePassword }
-      });
+  //   try {
+  //     const token = localStorage.getItem('userToken');
+  //     await axios.delete(`${API_URL}/settings/user/account`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //       data: { password: deletePassword }
+  //     });
 
-      alert('Account deleted successfully');
-      localStorage.removeItem('userToken');
-      router.push('/');
-    } catch (error) {
-      alert(error.response?.data?.message || 'Failed to delete account');
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     alert('Account deleted successfully');
+  //     localStorage.removeItem('userToken');
+  //     router.push('/');
+  //   } catch (error) {
+  //     alert(error.response?.data?.message || 'Failed to delete account');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   if (loading && !user) {
     return (
@@ -252,7 +252,7 @@ export default function UserSettings() {
             {/* Tabs */}
             <div className="bg-white rounded-lg border border-gray-200 mb-6">
               <div className="flex border-b border-gray-200 overflow-x-auto">
-                <button
+                {/* <button
                   onClick={() => setActiveTab('account')}
                   className={`px-6 py-4 text-sm font-medium whitespace-nowrap ${
                     activeTab === 'account'
@@ -261,7 +261,7 @@ export default function UserSettings() {
                   }`}
                 >
                   Account settings
-                </button>
+                </button> */}
                 <button
                   onClick={() => setActiveTab('notifications')}
                   className={`px-6 py-4 text-sm font-medium whitespace-nowrap ${
@@ -286,7 +286,7 @@ export default function UserSettings() {
 
               <div className="p-6">
                 {/* Account Settings Tab */}
-                {activeTab === 'account' && (
+                {/* {activeTab === 'account' && (
                   <form onSubmit={handleUpdateAccount} className="space-y-6">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">Account settings</h3>
@@ -366,7 +366,7 @@ export default function UserSettings() {
                       </div>
                     </div>
                   </form>
-                )}
+                )} */}
 
                 {/* Notification Preferences Tab */}
                 {activeTab === 'notifications' && (
@@ -477,9 +477,9 @@ export default function UserSettings() {
                     {/* Privacy Settings */}
                     <form onSubmit={handleUpdatePrivacy}>
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">Security & privacy</h3>
-                      <p className="text-sm text-gray-600 mb-6">Control your password and manage account security</p>
+                      <p className="text-sm text-gray-600 mb-6">Control your password </p>
 
-                      <div className="space-y-4 mb-6">
+                      {/* <div className="space-y-4 mb-6">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">Profile visibility</label>
                           <select
@@ -535,7 +535,7 @@ export default function UserSettings() {
                           <Save className="w-4 h-4" />
                           <span>Update privacy</span>
                         </button>
-                      </div>
+                      </div> */}
                     </form>
 
                     {/* Change Password */}
@@ -611,35 +611,7 @@ export default function UserSettings() {
                     </form>
 
                     {/* Delete Account */}
-                    <div className="border-t border-gray-200 pt-8">
-                      <h3 className="text-lg font-semibold text-red-600 mb-4">Delete account</h3>
-                      <p className="text-sm text-gray-600 mb-4">
-                        Once you delete your account, there is no going back. Please be certain.
-                      </p>
-
-                      <div className="max-w-md space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Enter password to confirm</label>
-                          <input
-                            type="password"
-                            value={deletePassword}
-                            onChange={(e) => setDeletePassword(e.target.value)}
-                            placeholder="Enter your password"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                          />
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={handleDeleteAccount}
-                          disabled={loading || !deletePassword}
-                          className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          <span>Delete account</span>
-                        </button>
-                      </div>
-                    </div>
+                    
                   </div>
                 )}
               </div>

@@ -9,7 +9,11 @@ import {
   Star,
   Clock,
   Plus,
-  User
+  User,
+  AlertCircle,
+  CheckCircle,
+  XCircle,
+  Loader
 } from 'lucide-react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -28,6 +32,7 @@ export default function MentorList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [myMentorProfile, setMyMentorProfile] = useState(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -46,6 +51,7 @@ export default function MentorList() {
   useEffect(() => {
     fetchUserData();
     fetchMentors();
+    fetchMyMentorProfile();
   }, [searchQuery, filterExpertise, filterExperience, currentPage]);
 
   const fetchUserData = async () => {
@@ -59,6 +65,19 @@ export default function MentorList() {
       console.error('Error fetching user:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchMyMentorProfile = async () => {
+    try {
+      const token = localStorage.getItem('userToken');
+      const { data } = await axios.get(`${API_URL}/mentors/me/profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setMyMentorProfile(data);
+    } catch (error) {
+      // User doesn't have a mentor profile yet
+      setMyMentorProfile(null);
     }
   };
 
@@ -99,16 +118,19 @@ export default function MentorList() {
         }
       };
 
-      await axios.post(`${API_URL}/mentors`, mentorData, {
+      const { data } = await axios.post(`${API_URL}/mentors`, mentorData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       setShowCreateModal(false);
       resetForm();
-      fetchMentors();
-      alert('Mentor profile created successfully!');
+      fetchMyMentorProfile();
+      alert('Mentor profile submitted successfully! It will be reviewed by an administrator before becoming visible.');
     } catch (error) {
-      alert(error.response?.data?.message || 'Failed to create mentor profile');
+      const errorMsg = error.response?.data?.errors 
+        ? error.response.data.errors.join('\n')
+        : error.response?.data?.message || 'Failed to create mentor profile';
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -128,12 +150,88 @@ export default function MentorList() {
     });
   };
 
+  const getStatusBadge = (status) => {
+    const badges = {
+      pending: {
+        icon: AlertCircle,
+        text: 'Pending Review',
+        className: 'bg-yellow-100 text-yellow-800 border-yellow-200'
+      },
+      approved: {
+        icon: CheckCircle,
+        text: 'Approved',
+        className: 'bg-green-100 text-green-800 border-green-200'
+      },
+      rejected: {
+        icon: XCircle,
+        text: 'Rejected',
+        className: 'bg-red-100 text-red-800 border-red-200'
+      }
+    };
+
+    const badge = badges[status] || badges.pending;
+    const Icon = badge.icon;
+
+    return (
+      <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-medium ${badge.className}`}>
+        <Icon className="w-3.5 h-3.5" />
+        {badge.text}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <UserSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex-1 overflow-auto">
         <UserNavbar onMenuClick={() => setSidebarOpen(true)} user={user} />
+
+        {/* My Mentor Profile Status Banner */}
+        {myMentorProfile && (
+          <div className="bg-white border-b border-gray-200">
+            <div className="max-w-7xl mx-auto px-6 py-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 mt-0.5">
+                    {myMentorProfile.approvalStatus === 'pending' && (
+                      <AlertCircle className="w-5 h-5 text-yellow-600" />
+                    )}
+                    {myMentorProfile.approvalStatus === 'approved' && (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    )}
+                    {myMentorProfile.approvalStatus === 'rejected' && (
+                      <XCircle className="w-5 h-5 text-red-600" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-sm font-semibold text-gray-900">Your Mentor Profile</h3>
+                      {getStatusBadge(myMentorProfile.approvalStatus)}
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      {myMentorProfile.approvalStatus === 'pending' && 
+                        'Your profile is under review by our administrators.'
+                      }
+                      {myMentorProfile.approvalStatus === 'approved' && 
+                        'Your profile is live and visible to students!'
+                      }
+                      {myMentorProfile.approvalStatus === 'rejected' && 
+                        `Reason: ${myMentorProfile.rejectionReason || 'Does not meet requirements'}`
+                      }
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => router.push(`/dashboard/mentorship/${myMentorProfile._id}`)}
+                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium whitespace-nowrap"
+                >
+                  View My Profile
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Create Mentor Modal */}
         {showCreateModal && (
@@ -146,103 +244,182 @@ export default function MentorList() {
                 </button>
               </div>
 
+              {/* Admin Approval Notice */}
+              <div className="px-6 pt-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-blue-900">Admin Approval Required</p>
+                      <p className="text-xs text-blue-700 mt-1">
+                        Your mentor profile will be reviewed by administrators before becoming visible to students. Please ensure all required fields are complete and accurate.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <form onSubmit={handleCreateMentor} className="p-6 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="text"
                       required
                       value={newMentor.name}
                       onChange={(e) => setNewMentor({...newMentor, name: e.target.value})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., Dr. Rajesh Kumar"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Professional Title <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="text"
                       required
                       value={newMentor.title}
                       onChange={(e) => setNewMentor({...newMentor, title: e.target.value})}
-                      placeholder="e.g., Senior Engineer"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., Senior Structural Engineer"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Organization</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Organization <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="text"
+                      required
                       value={newMentor.organization}
                       onChange={(e) => setNewMentor({...newMentor, organization: e.target.value})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., Larsen & Toubro"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Location <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="text"
+                      required
                       value={newMentor.location}
                       onChange={(e) => setNewMentor({...newMentor, location: e.target.value})}
                       placeholder="e.g., Mumbai, India"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Years of Experience</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Years of Experience <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="number"
+                      required
+                      min="0"
                       value={newMentor.experience.years}
                       onChange={(e) => setNewMentor({...newMentor, experience: {...newMentor.experience, years: e.target.value}})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., 10"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Email <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="email"
+                      required
                       value={newMentor.contact.email}
                       onChange={(e) => setNewMentor({...newMentor, contact: {...newMentor.contact, email: e.target.value}})}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="your.email@example.com"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Bio *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    LinkedIn Profile (Optional)
+                  </label>
+                  <input
+                    type="url"
+                    value={newMentor.contact.linkedin}
+                    onChange={(e) => setNewMentor({...newMentor, contact: {...newMentor.contact, linkedin: e.target.value}})}
+                    placeholder="https://linkedin.com/in/your-profile"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    Professional Bio <span className="text-red-500">*</span>
+                  </label>
                   <textarea
                     required
                     value={newMentor.bio}
                     onChange={(e) => setNewMentor({...newMentor, bio: e.target.value})}
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    minLength={50}
+                    maxLength={1000}
+                    placeholder="Tell us about your professional journey, achievements, and what you can offer as a mentor... (minimum 50 characters)"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-gray-900"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {newMentor.bio.length}/1000 characters (minimum 50)
+                  </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Expertise (comma separated)</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    Areas of Expertise <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
+                    required
                     value={newMentor.expertise}
                     onChange={(e) => setNewMentor({...newMentor, expertise: e.target.value})}
-                    placeholder="e.g., Structural Design, Project Management"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., Structural Design, Project Management, Civil Engineering"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Separate multiple areas with commas</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Skills (comma separated)</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    Technical Skills <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
+                    required
                     value={newMentor.skills}
                     onChange={(e) => setNewMentor({...newMentor, skills: e.target.value})}
-                    placeholder="e.g., AutoCAD, STAAD Pro, Leadership"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., AutoCAD, STAAD Pro, Leadership, Team Management"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Separate multiple skills with commas</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    Experience Description <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    required
+                    value={newMentor.experience.description}
+                    onChange={(e) => setNewMentor({...newMentor, experience: {...newMentor.experience, description: e.target.value}})}
+                    rows={3}
+                    placeholder="Briefly describe your professional experience and key accomplishments..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-gray-900"
                   />
                 </div>
 
@@ -250,14 +427,16 @@ export default function MentorList() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50"
+                    className="flex-1 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {loading ? 'Creating...' : 'Create Profile'}
+                    {loading && <Loader className="w-4 h-4 animate-spin" />}
+                    {loading ? 'Submitting...' : 'Submit for Review'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
-                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
+                    disabled={loading}
+                    className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
                   >
                     Cancel
                   </button>
@@ -276,16 +455,18 @@ export default function MentorList() {
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">Mentorship</h1>
                   <p className="text-sm text-gray-600 mt-1">
-                    Connect with engineers & developers to get support guidance
+                    Connect with experienced engineers & developers for guidance
                   </p>
                 </div>
-                <button
-                  onClick={() => setShowCreateModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Become a mentor</span>
-                </button>
+                {!myMentorProfile && (
+                  <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Become a mentor</span>
+                  </button>
+                )}
               </div>
 
               {/* Filters */}
@@ -298,7 +479,10 @@ export default function MentorList() {
                         type="text"
                         placeholder="Search by name, company, or skill"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          setCurrentPage(1);
+                        }}
                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
@@ -306,24 +490,32 @@ export default function MentorList() {
 
                   <select
                     value={filterExperience}
-                    onChange={(e) => setFilterExperience(e.target.value)}
+                    onChange={(e) => {
+                      setFilterExperience(e.target.value);
+                      setCurrentPage(1);
+                    }}
                     className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">10+ years</option>
+                    <option value="">All Experience</option>
                     <option value="5">5+ years</option>
                     <option value="10">10+ years</option>
                     <option value="15">15+ years</option>
+                    <option value="20">20+ years</option>
                   </select>
 
                   <select
                     value={filterExpertise}
-                    onChange={(e) => setFilterExpertise(e.target.value)}
+                    onChange={(e) => {
+                      setFilterExpertise(e.target.value);
+                      setCurrentPage(1);
+                    }}
                     className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">Civil engineering</option>
-                    <option value="Civil engineering">Civil engineering</option>
+                    <option value="">All Disciplines</option>
+                    <option value="Civil engineering">Civil Engineering</option>
                     <option value="Structural">Structural</option>
                     <option value="Mechanical">Mechanical</option>
+                    <option value="Electrical">Electrical</option>
                   </select>
                 </div>
               </div>
@@ -332,25 +524,27 @@ export default function MentorList() {
             {/* Mentors List */}
             <div className="mb-4">
               <h2 className="text-lg font-semibold text-gray-900">
-                Mentors
+                Available Mentors
               </h2>
-              <p className="text-sm text-gray-600">Page 1 of {totalPages}</p>
+              <p className="text-sm text-gray-600">Page {currentPage} of {totalPages}</p>
             </div>
 
             {loading ? (
               <div className="flex items-center justify-center p-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <Loader className="w-8 h-8 animate-spin text-blue-600" />
               </div>
             ) : mentors.length === 0 ? (
               <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
                 <User className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-500 mb-4">No mentors found</p>
-                <button
-                  onClick={() => setShowCreateModal(true)}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-                >
-                  Be the First Mentor
-                </button>
+                {!myMentorProfile && (
+                  <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                  >
+                    Be the First Mentor
+                  </button>
+                )}
               </div>
             ) : (
               <div className="space-y-4">
@@ -361,8 +555,10 @@ export default function MentorList() {
                   >
                     <div className="flex flex-col md:flex-row gap-6">
                       {/* Profile Image */}
-                      <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                        <User className="w-12 h-12 text-gray-600" />
+                      <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-white">
+                        <span className="text-2xl font-bold">
+                          {mentor.name.charAt(0).toUpperCase()}
+                        </span>
                       </div>
 
                       {/* Mentor Info */}
@@ -375,15 +571,26 @@ export default function MentorList() {
                               <p className="text-sm text-gray-500">{mentor.organization}</p>
                             )}
                           </div>
+                          {mentor.stats?.rating > 0 && (
+                            <div className="flex items-center gap-1">
+                              <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                              <span className="text-sm font-medium">{mentor.stats.rating.toFixed(1)}</span>
+                            </div>
+                          )}
                         </div>
 
                         {/* Tags */}
                         <div className="flex flex-wrap gap-2 mb-3">
-                          {mentor.expertise?.slice(0, 3).map((exp, idx) => (
+                          {mentor.expertise?.slice(0, 4).map((exp, idx) => (
                             <span key={idx} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
                               {exp}
                             </span>
                           ))}
+                          {mentor.expertise?.length > 4 && (
+                            <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+                              +{mentor.expertise.length - 4} more
+                            </span>
+                          )}
                         </div>
 
                         {/* Bio */}
@@ -416,13 +623,13 @@ export default function MentorList() {
                       <div className="flex flex-col gap-2 md:w-40">
                         <button
                           onClick={() => router.push(`/dashboard/mentorship/${mentor._id}`)}
-                          className="px-4 py-2 text-sm text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 font-medium"
+                          className="px-4 py-2 text-sm text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 font-medium transition-colors"
                         >
                           View profile
                         </button>
                         <button
                           onClick={() => router.push(`/dashboard/mentorship/${mentor._id}`)}
-                          className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                          className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
                         >
                           Request mentorship
                         </button>
@@ -436,19 +643,40 @@ export default function MentorList() {
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 mt-8">
-                {[...Array(totalPages)].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`w-10 h-10 rounded-lg ${
-                      currentPage === i + 1
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  Previous
+                </button>
+                
+                {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                  const pageNum = i + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-10 h-10 rounded-lg text-sm font-medium ${
+                        currentPage === pageNum
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+
+                {totalPages > 5 && <span className="text-gray-500">...</span>}
+
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  Next
+                </button>
               </div>
             )}
           </div>

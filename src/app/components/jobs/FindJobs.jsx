@@ -180,7 +180,7 @@ export default function FindJobs() {
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Find Jobs</h1>
                 <p className="text-gray-600 mt-1">
-                  Discover engineering opportunities across India
+                  Discover engineering opportunities across globe
                   {pagination.total > 0 && (
                     <span className="ml-2 text-teal-600 font-medium">
                       ({pagination.total} jobs found)

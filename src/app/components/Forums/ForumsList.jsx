@@ -5,15 +5,16 @@ import {
   Search, 
   Plus,
   MessageSquare,
-  Eye,
   Pin,
   Lock,
-  TrendingUp,
   Clock,
-  User
+  User,
+  Trash2,
+  Shield,
+  AlertCircle
 } from 'lucide-react';
 import axios from 'axios';
-import { useRouter , useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import UserSidebar from '../layout/sidebar';
 import UserNavbar from '../layout/navbar';
 
@@ -29,6 +30,7 @@ export default function ForumsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [sortBy, setSortBy] = useState('latest');
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -39,6 +41,11 @@ export default function ForumsList() {
     category: '',
     tags: ''
   });
+
+  const [newCategory, setNewCategory] = useState('');
+
+  const isAdmin = user?.role === 'admin';
+  const isModerator = user?.role === 'admin' || user?.role === 'moderator';
 
   useEffect(() => {
     fetchUserData();
@@ -121,6 +128,56 @@ export default function ForumsList() {
     }
   };
 
+  const handleDeleteThread = async (threadId, e) => {
+    e.stopPropagation();
+    
+    if (!confirm('Are you sure you want to delete this thread? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('userToken');
+      await axios.delete(`${API_URL}/forums/${threadId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      fetchThreads();
+      alert('Thread deleted successfully');
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to delete thread');
+    }
+  };
+
+  const handleTogglePin = async (threadId, e) => {
+    e.stopPropagation();
+    
+    try {
+      const token = localStorage.getItem('userToken');
+      await axios.patch(`${API_URL}/forums/${threadId}/pin`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      fetchThreads();
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to pin thread');
+    }
+  };
+
+  const handleToggleLock = async (threadId, e) => {
+    e.stopPropagation();
+    
+    try {
+      const token = localStorage.getItem('userToken');
+      await axios.patch(`${API_URL}/forums/${threadId}/lock`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      fetchThreads();
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to lock thread');
+    }
+  };
+
   const resetForm = () => {
     setNewThread({
       title: '',
@@ -141,12 +198,31 @@ export default function ForumsList() {
     return `${days} days ago`;
   };
 
+  const availableCategories = [
+    'Structural engineering',
+    'Civil & Infrastructure',
+    'Mechanical & manufacturing',
+    'Materials & testing',
+    'Jobs & opportunities',
+    'General'
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <UserSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex-1 overflow-auto">
         <UserNavbar onMenuClick={() => setSidebarOpen(true)} user={user} />
+
+        {/* Admin Notice */}
+        {isAdmin && (
+          <div className="bg-blue-50 border-b border-blue-200 px-6 py-2">
+            <div className="max-w-7xl mx-auto flex items-center gap-2 text-sm text-blue-800">
+              <Shield className="w-4 h-4" />
+              <span>Admin mode: You have moderation privileges</span>
+            </div>
+          </div>
+        )}
 
         {/* Create Thread Modal */}
         {showCreateModal && (
@@ -181,12 +257,9 @@ export default function ForumsList() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select category</option>
-                    <option value="Structural engineering">Structural engineering</option>
-                    <option value="Civil & Infrastructure">Civil & Infrastructure</option>
-                    <option value="Mechanical & manufacturing">Mechanical & manufacturing</option>
-                    <option value="Materials & testing">Materials & testing</option>
-                    <option value="Jobs & opportunities">Jobs & opportunities</option>
-                    <option value="General">General</option>
+                    {availableCategories.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
                   </select>
                 </div>
 
@@ -245,13 +318,24 @@ export default function ForumsList() {
                   Ask questions, share experiences, and learn from the KEA members
                 </p>
               </div>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-              >
-                <Plus className="w-4 h-4" />
-                <span>New thread</span>
-              </button>
+              <div className="flex gap-2">
+                {isAdmin && (
+                  <button
+                    onClick={() => setShowCategoryModal(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Category</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>New thread</span>
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -306,12 +390,6 @@ export default function ForumsList() {
                       <option value="unanswered">Unanswered</option>
                     </select>
                   </div>
-                </div>
-
-                {/* Thread Stats */}
-                <div className="flex items-center justify-between mb-4 text-sm text-gray-600">
-                  <span>Showing 1-20 of {threads.length} threads</span>
-                  <span>1 new today</span>
                 </div>
 
                 {/* Threads List */}
@@ -386,15 +464,36 @@ export default function ForumsList() {
                             </div>
                           </div>
 
-                          {thread.replies && thread.replies.length > 0 && (
-                            <div className="hidden sm:flex flex-col items-end gap-1 min-w-[150px]">
-                              <span className="text-xs text-gray-600">Last reply by</span>
-                              <span className="text-sm font-medium text-gray-900">
-                                {thread.replies[thread.replies.length - 1]?.author?.name}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {getTimeAgo(thread.replies[thread.replies.length - 1]?.createdAt)}
-                              </span>
+                          {/* Admin Controls */}
+                          {isModerator && (
+                            <div className="flex gap-1">
+                              <button
+                                onClick={(e) => handleTogglePin(thread._id, e)}
+                                className={`p-2 rounded-lg hover:bg-gray-100 ${
+                                  thread.isPinned ? 'text-blue-600' : 'text-gray-400'
+                                }`}
+                                title={thread.isPinned ? 'Unpin thread' : 'Pin thread'}
+                              >
+                                <Pin className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={(e) => handleToggleLock(thread._id, e)}
+                                className={`p-2 rounded-lg hover:bg-gray-100 ${
+                                  thread.isLocked ? 'text-orange-600' : 'text-gray-400'
+                                }`}
+                                title={thread.isLocked ? 'Unlock thread' : 'Lock thread'}
+                              >
+                                <Lock className="w-4 h-4" />
+                              </button>
+                              {isAdmin && (
+                                <button
+                                  onClick={(e) => handleDeleteThread(thread._id, e)}
+                                  className="p-2 rounded-lg hover:bg-red-50 text-red-600"
+                                  title="Delete thread"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              )}
                             </div>
                           )}
                         </div>
