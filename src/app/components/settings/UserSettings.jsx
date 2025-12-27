@@ -23,7 +23,7 @@ export default function UserSettings() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('account');
+  const [activeTab, setActiveTab] = useState('notifications');
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 

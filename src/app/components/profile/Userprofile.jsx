@@ -118,11 +118,11 @@
 //       const res = await axios.get(`${API_URL}/users/me`, {
 //         headers: { Authorization: `Bearer ${token}` },
 //       });
-      
+
 //       const userData = res.data;
 //       console.log('User data from backend:', userData);
 //       setUser(userData);
-      
+
 //       setFormData({
 //         name: userData.name || '',
 //         email: userData.email || '',
@@ -268,7 +268,7 @@
 //     setSaving(true);
 //     try {
 //       const token = localStorage.getItem('userToken');
-      
+
 //       const updatePayload = {
 //         name: formData.name,
 //         email: formData.email,
@@ -304,7 +304,7 @@
 
 //       console.log('Update response:', res.data);
 //       setUser(res.data);
-      
+
 //       localStorage.setItem('userData', JSON.stringify({
 //         id: res.data._id,
 //         name: res.data.name,
@@ -471,7 +471,7 @@
 //                         ) : (
 //                           <h2 className="text-xl font-bold text-gray-900">{formData.name}</h2>
 //                         )}
-                        
+
 //                         {isEditing ? (
 //                           <input
 //                             type="text"
@@ -486,7 +486,7 @@
 //                             {formData.headline || `${formData.category} • Member since ${user?.createdAt ? new Date(user.createdAt).getFullYear() : '2023'}`}
 //                           </p>
 //                         )}
-                        
+
 //                         <p className="text-xs text-gray-500 mt-1">
 //                           {formData.position || 'Position'} • {formData.company || 'Company'} • {formData.location || 'Location'}
 //                         </p>
@@ -501,7 +501,7 @@
 //                     <h3 className="text-base font-semibold text-gray-900">Personal details</h3>
 //                     <span className="text-xs text-gray-500">Basic information linked to your membership</span>
 //                   </div>
-                  
+
 //                   <div className="space-y-4">
 //                     <div className="grid grid-cols-2 gap-4">
 //                       <div>
@@ -718,7 +718,7 @@
 //                     <h3 className="text-base font-semibold text-gray-900">Skills</h3>
 //                     <span className="text-xs text-gray-500">Highlight your top expertise</span>
 //                   </div>
-                  
+
 //                   <div className="flex flex-wrap gap-2 mb-4">
 //                     {formData.skills.length > 0 ? (
 //                       formData.skills.map((skill, index) => (
@@ -1030,12 +1030,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Briefcase, 
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Briefcase,
   GraduationCap,
   Edit,
   Save,
@@ -1054,14 +1054,18 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import UserSidebar from '../layout/sidebar';
 import UserNavbar from '../layout/navbar';
+import { Upload } from "lucide-react";
+
 
 export default function UserProfile() {
-  const router = useRouter();
+  
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const router = useRouter();
+
 
   const [formData, setFormData] = useState({
     name: '',
@@ -1171,25 +1175,25 @@ export default function UserProfile() {
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    
+
     const daysInMonth = getDaysInMonth(year, month);
     const firstDayOfMonth = new Date(year, month, 1).getDay();
-    
+
     const prevMonth = () => {
       setCurrentDate(new Date(year, month - 1, 1));
     };
-    
+
     const nextMonth = () => {
       setCurrentDate(new Date(year, month + 1, 1));
     };
-    
+
     const handleDateClick = (day) => {
       const selectedDate = new Date(year, month, day);
       const formattedDate = `${selectedDate.getFullYear()}/${String(selectedDate.getMonth() + 1).padStart(2, '0')}`;
       onDateSelect(formattedDate);
       onClose();
     };
-    
+
     const handleYearSelect = (selectedYear) => {
       setCurrentDate(new Date(selectedYear, month, 1));
       setView('month');
@@ -1202,13 +1206,13 @@ export default function UserProfile() {
             <ChevronLeft className="w-4 h-4" />
           </button>
           <div className="flex gap-2">
-            <button 
+            <button
               onClick={() => setView('month')}
               className="font-semibold hover:text-blue-600"
             >
               {months[month]}
             </button>
-            <button 
+            <button
               onClick={() => setView('year')}
               className="font-semibold hover:text-blue-600"
             >
@@ -1236,18 +1240,17 @@ export default function UserProfile() {
               {Array.from({ length: firstDayOfMonth }).map((_, index) => (
                 <div key={`empty-${index}`} className="h-8"></div>
               ))}
-              
+
               {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
-                const isToday = day === new Date().getDate() && 
-                               month === new Date().getMonth() && 
-                               year === new Date().getFullYear();
+                const isToday = day === new Date().getDate() &&
+                  month === new Date().getMonth() &&
+                  year === new Date().getFullYear();
                 return (
                   <button
                     key={day}
                     onClick={() => handleDateClick(day)}
-                    className={`h-8 flex items-center justify-center text-sm rounded hover:bg-blue-100 ${
-                      isToday ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
-                    }`}
+                    className={`h-8 flex items-center justify-center text-sm rounded hover:bg-blue-100 ${isToday ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                      }`}
                   >
                     {day}
                   </button>
@@ -1262,9 +1265,8 @@ export default function UserProfile() {
               <button
                 key={year}
                 onClick={() => handleYearSelect(year)}
-                className={`p-2 text-sm rounded hover:bg-blue-100 ${
-                  year === currentDate.getFullYear() ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
-                }`}
+                className={`p-2 text-sm rounded hover:bg-blue-100 ${year === currentDate.getFullYear() ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                  }`}
               >
                 {year}
               </button>
@@ -1302,20 +1304,20 @@ export default function UserProfile() {
       const res = await axios.get(`${API_URL}/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       const userData = res.data;
-      console.log('DEBUG fetchUserProfile - User data:', userData);
-      console.log('DEBUG fetchUserProfile - Category:', userData.profile?.category);
-      console.log('DEBUG fetchUserProfile - OtherCategory:', userData.profile?.otherCategory);
-      console.log('DEBUG fetchUserProfile - Profile:', userData.profile);
-      
+      // console.log('DEBUG fetchUserProfile - User data:', userData);
+      // console.log('DEBUG fetchUserProfile - Category:', userData.profile?.category);
+      // console.log('DEBUG fetchUserProfile - OtherCategory:', userData.profile?.otherCategory);
+      // console.log('DEBUG fetchUserProfile - Profile:', userData.profile);
+
       // Check if category is custom or predefined
       const userCategory = userData.profile?.category || '';
       const userOtherCategory = userData.profile?.otherCategory || '';
-      
+
       let finalCategory = userCategory;
       let finalOtherCategory = userOtherCategory;
-      
+
       // Logic to handle "Other" category
       if (userCategory && !categories.includes(userCategory)) {
         // Agar category allowed list me nahi hai (like "builder")
@@ -1326,10 +1328,10 @@ export default function UserProfile() {
         finalCategory = 'Other';
         finalOtherCategory = userOtherCategory;
       }
-      
+
       console.log('DEBUG fetchUserProfile - Setting category:', finalCategory);
       console.log('DEBUG fetchUserProfile - Setting otherCategory:', finalOtherCategory);
-      
+
       setUser(userData);
       setFormData({
         name: userData.name || '',
@@ -1477,16 +1479,16 @@ export default function UserProfile() {
     setSaving(true);
     try {
       const token = localStorage.getItem('userToken');
-      
-      console.log('DEBUG handleSaveProfile - Form data before saving:', {
-        category: formData.category,
-        otherCategory: formData.otherCategory
-      });
-      
+
+      // console.log('DEBUG handleSaveProfile - Form data before saving:', {
+      //   category: formData.category,
+      //   otherCategory: formData.otherCategory
+      // });
+
       // Determine final category value
       let finalCategory;
       let finalOtherCategory;
-      
+
       if (formData.category === 'Other') {
         if (formData.otherCategory.trim()) {
           finalCategory = formData.otherCategory.trim();
@@ -1502,7 +1504,7 @@ export default function UserProfile() {
         finalOtherCategory = '';
         console.log('DEBUG: Saving as predefined category:', finalCategory);
       }
-      
+
       const updatePayload = {
         name: formData.name,
         email: formData.email,
@@ -1537,12 +1539,12 @@ export default function UserProfile() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log('DEBUG handleSaveProfile - Update response:', res.data);
-      console.log('DEBUG handleSaveProfile - Updated category:', res.data.profile?.category);
-      console.log('DEBUG handleSaveProfile - Updated otherCategory:', res.data.profile?.otherCategory);
-      
+      // console.log('DEBUG handleSaveProfile - Update response:', res.data);
+      // console.log('DEBUG handleSaveProfile - Updated category:', res.data.profile?.category);
+      // console.log('DEBUG handleSaveProfile - Updated otherCategory:', res.data.profile?.otherCategory);
+
       setUser(res.data);
-      
+
       localStorage.setItem('userData', JSON.stringify({
         id: res.data._id,
         name: res.data.name,
@@ -1564,30 +1566,30 @@ export default function UserProfile() {
 
   const formatDate = (dateString) => {
     if (!dateString) return '';
-    
+
     // If "Present"
     if (dateString.toLowerCase() === 'present') return 'Present';
-    
+
     // If already in YYYY/MM format
     if (dateString.match(/^\d{4}\/\d{2}$/)) {
       const [year, month] = dateString.split('/');
       const date = new Date(year, month - 1);
       return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
     }
-    
+
     // If in YYYY-MM format
     if (dateString.match(/^\d{4}-\d{2}$/)) {
       const [year, month] = dateString.split('-');
       const date = new Date(year, month - 1);
       return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
     }
-    
+
     // If full date
     const date = new Date(dateString);
     if (!isNaN(date.getTime())) {
       return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
     }
-    
+
     return dateString; // Return as-is if can't parse
   };
 
@@ -1646,6 +1648,16 @@ export default function UserProfile() {
                       <CheckCircle className="w-4 h-4 text-green-600" />
                       Profile verified
                     </button>
+
+                    {/* Upload Resume Button */}
+                    <button
+                      onClick={() => router.push("/dashboard/documents")}
+                      className="flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors"
+                    >
+                      <Upload className="w-4 h-4" />
+                      Upload Resume
+                    </button>
+
                     <button
                       onClick={() => setIsEditing(true)}
                       className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
@@ -1655,6 +1667,7 @@ export default function UserProfile() {
                     </button>
                   </>
                 ) : (
+
                   <div className="flex gap-3">
                     <button
                       onClick={handleSaveProfile}
@@ -1665,8 +1678,8 @@ export default function UserProfile() {
                       {saving ? 'Saving...' : 'Save Changes'}
                     </button>
                     <button
-                      onClick={() => { 
-                        fetchUserProfile(); 
+                      onClick={() => {
+                        fetchUserProfile();
                         setIsEditing(false);
                         setEditingExpIndex(null);
                         setEditingEduIndex(null);
@@ -1686,8 +1699,8 @@ export default function UserProfile() {
                   <div className="text-right">
                     <div className="font-medium text-gray-900">{formData.name}</div>
                     <div className="text-xs text-gray-500">
-                      {(formData.category === 'Other' && formData.otherCategory) 
-                        ? formData.otherCategory 
+                      {(formData.category === 'Other' && formData.otherCategory)
+                        ? formData.otherCategory
                         : formData.category || 'Civil Engineering'}
                     </div>
                   </div>
@@ -1739,7 +1752,7 @@ export default function UserProfile() {
                         ) : (
                           <h2 className="text-xl font-bold text-gray-900">{formData.name}</h2>
                         )}
-                        
+
                         {isEditing ? (
                           <input
                             type="text"
@@ -1754,7 +1767,7 @@ export default function UserProfile() {
                             {formData.headline || `${(formData.category === 'Other' && formData.otherCategory) ? formData.otherCategory : formData.category} • Member since ${user?.createdAt ? new Date(user.createdAt).getFullYear() : '2023'}`}
                           </p>
                         )}
-                        
+
                         <p className="text-xs text-gray-500 mt-1">
                           {formData.position || 'Position'} • {formData.company || 'Company'} • {formData.location || 'Location'}
                         </p>
@@ -1769,7 +1782,7 @@ export default function UserProfile() {
                     <h3 className="text-base font-semibold text-gray-900">Personal details</h3>
                     <span className="text-xs text-gray-500">Basic information linked to your membership</span>
                   </div>
-                  
+
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -1868,7 +1881,7 @@ export default function UserProfile() {
                               <option key={cat} value={cat}>{cat}</option>
                             ))}
                           </select>
-                          
+
                           {formData.category === 'Other' && (
                             <div className="mt-2">
                               <input
@@ -1887,8 +1900,8 @@ export default function UserProfile() {
                         </div>
                       ) : (
                         <p className="text-sm text-gray-900">
-                          {(formData.category === 'Other' && formData.otherCategory) 
-                            ? formData.otherCategory 
+                          {(formData.category === 'Other' && formData.otherCategory)
+                            ? formData.otherCategory
                             : formData.category || 'Not set'}
                         </p>
                       )}
@@ -2008,7 +2021,7 @@ export default function UserProfile() {
                     <h3 className="text-base font-semibold text-gray-900">Skills</h3>
                     <span className="text-xs text-gray-500">Highlight your top expertise</span>
                   </div>
-                  
+
                   <div className="flex flex-wrap gap-2 mb-4">
                     {formData.skills.length > 0 ? (
                       formData.skills.map((skill, index) => (
@@ -2074,14 +2087,14 @@ export default function UserProfile() {
                               </div>
                               {isEditing && (
                                 <div className="flex gap-2">
-                                  <button 
-                                    onClick={() => handleEditExperience(index)} 
+                                  <button
+                                    onClick={() => handleEditExperience(index)}
                                     className="text-blue-600 hover:text-blue-700"
                                   >
                                     <Edit className="w-4 h-4" />
                                   </button>
-                                  <button 
-                                    onClick={() => handleRemoveExperience(index)} 
+                                  <button
+                                    onClick={() => handleRemoveExperience(index)}
                                     className="text-red-600 hover:text-red-700"
                                   >
                                     <Trash2 className="w-4 h-4" />
@@ -2106,18 +2119,18 @@ export default function UserProfile() {
                         <input
                           type="text"
                           value={newExperience.position}
-                          onChange={(e) => setNewExperience({...newExperience, position: e.target.value})}
+                          onChange={(e) => setNewExperience({ ...newExperience, position: e.target.value })}
                           placeholder="Position"
                           className="px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                         />
                         <input
                           type="text"
                           value={newExperience.company}
-                          onChange={(e) => setNewExperience({...newExperience, company: e.target.value})}
+                          onChange={(e) => setNewExperience({ ...newExperience, company: e.target.value })}
                           placeholder="Company"
                           className="px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                         />
-                        
+
                         {/* From Date with Calendar */}
                         <div className="relative">
                           <div className="flex items-center">
@@ -2128,7 +2141,7 @@ export default function UserProfile() {
                                 const value = e.target.value;
                                 // Allow only numbers and slash, max length 7 (YYYY/MM)
                                 if (/^\d*\/?\d*$/.test(value) && value.length <= 7) {
-                                  setNewExperience({...newExperience, from: value});
+                                  setNewExperience({ ...newExperience, from: value });
                                 }
                               }}
                               placeholder="YYYY/MM"
@@ -2144,7 +2157,7 @@ export default function UserProfile() {
                                   if (clean.length >= 6) {
                                     const year = clean.substring(0, 4);
                                     const month = clean.substring(4, 6);
-                                    setNewExperience({...newExperience, from: `${year}/${month}`});
+                                    setNewExperience({ ...newExperience, from: `${year}/${month}` });
                                   }
                                 }
                               }}
@@ -2160,13 +2173,13 @@ export default function UserProfile() {
                               <Calendar className="w-4 h-4 text-gray-600" />
                             </button>
                           </div>
-                          
+
                           {/* Calendar Picker for From Date */}
                           <CalendarPicker
                             isOpen={showFromCalendar}
                             date={fromCalendarDate}
                             onDateSelect={(date) => {
-                              setNewExperience({...newExperience, from: date});
+                              setNewExperience({ ...newExperience, from: date });
                               setShowFromCalendar(false);
                             }}
                             onClose={() => setShowFromCalendar(false)}
@@ -2182,7 +2195,7 @@ export default function UserProfile() {
                               onChange={(e) => {
                                 const value = e.target.value;
                                 if (/^\d*\/?\d*$/.test(value) && value.length <= 7) {
-                                  setNewExperience({...newExperience, to: value});
+                                  setNewExperience({ ...newExperience, to: value });
                                 }
                               }}
                               placeholder="YYYY/MM or Present"
@@ -2190,7 +2203,7 @@ export default function UserProfile() {
                               onBlur={(e) => {
                                 const value = e.target.value;
                                 if (value && value.toLowerCase() === 'present') {
-                                  setNewExperience({...newExperience, to: 'Present'});
+                                  setNewExperience({ ...newExperience, to: 'Present' });
                                 } else if (value && /^\d{4}\/\d{2}$/.test(value)) {
                                   // Already in correct format
                                 } else if (value) {
@@ -2198,7 +2211,7 @@ export default function UserProfile() {
                                   if (clean.length >= 6) {
                                     const year = clean.substring(0, 4);
                                     const month = clean.substring(4, 6);
-                                    setNewExperience({...newExperience, to: `${year}/${month}`});
+                                    setNewExperience({ ...newExperience, to: `${year}/${month}` });
                                   }
                                 }
                               }}
@@ -2214,13 +2227,13 @@ export default function UserProfile() {
                               <Calendar className="w-4 h-4 text-gray-600" />
                             </button>
                           </div>
-                          
+
                           {/* Calendar Picker for To Date */}
                           <CalendarPicker
                             isOpen={showToCalendar}
                             date={toCalendarDate}
                             onDateSelect={(date) => {
-                              setNewExperience({...newExperience, to: date});
+                              setNewExperience({ ...newExperience, to: date });
                               setShowToCalendar(false);
                             }}
                             onClose={() => setShowToCalendar(false)}
@@ -2229,7 +2242,7 @@ export default function UserProfile() {
                       </div>
                       <textarea
                         value={newExperience.description}
-                        onChange={(e) => setNewExperience({...newExperience, description: e.target.value})}
+                        onChange={(e) => setNewExperience({ ...newExperience, description: e.target.value })}
                         placeholder="Description"
                         rows="2"
                         className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
@@ -2266,14 +2279,14 @@ export default function UserProfile() {
                               </div>
                               {isEditing && (
                                 <div className="flex gap-2">
-                                  <button 
-                                    onClick={() => handleEditEducation(index)} 
+                                  <button
+                                    onClick={() => handleEditEducation(index)}
                                     className="text-blue-600 hover:text-blue-700"
                                   >
                                     <Edit className="w-4 h-4" />
                                   </button>
-                                  <button 
-                                    onClick={() => handleRemoveEducation(index)} 
+                                  <button
+                                    onClick={() => handleRemoveEducation(index)}
                                     className="text-red-600 hover:text-red-700"
                                   >
                                     <Trash2 className="w-4 h-4" />
@@ -2298,14 +2311,14 @@ export default function UserProfile() {
                         <input
                           type="text"
                           value={newEducation.degree}
-                          onChange={(e) => setNewEducation({...newEducation, degree: e.target.value})}
+                          onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
                           placeholder="Degree (e.g., B.E. Civil Engineering)"
                           className="px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                         />
                         <input
                           type="text"
                           value={newEducation.institution}
-                          onChange={(e) => setNewEducation({...newEducation, institution: e.target.value})}
+                          onChange={(e) => setNewEducation({ ...newEducation, institution: e.target.value })}
                           placeholder="Institution"
                           className="px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                         />
@@ -2315,7 +2328,7 @@ export default function UserProfile() {
                           onChange={(e) => {
                             const value = e.target.value;
                             if (/^\d*\/?\d*$/.test(value) && value.length <= 7) {
-                              setNewEducation({...newEducation, from: value});
+                              setNewEducation({ ...newEducation, from: value });
                             }
                           }}
                           placeholder="YYYY/MM"
@@ -2329,7 +2342,7 @@ export default function UserProfile() {
                               if (clean.length >= 6) {
                                 const year = clean.substring(0, 4);
                                 const month = clean.substring(4, 6);
-                                setNewEducation({...newEducation, from: `${year}/${month}`});
+                                setNewEducation({ ...newEducation, from: `${year}/${month}` });
                               }
                             }
                           }}
@@ -2340,7 +2353,7 @@ export default function UserProfile() {
                           onChange={(e) => {
                             const value = e.target.value;
                             if (/^\d*\/?\d*$/.test(value) && value.length <= 7) {
-                              setNewEducation({...newEducation, to: value});
+                              setNewEducation({ ...newEducation, to: value });
                             }
                           }}
                           placeholder="YYYY/MM"
@@ -2354,7 +2367,7 @@ export default function UserProfile() {
                               if (clean.length >= 6) {
                                 const year = clean.substring(0, 4);
                                 const month = clean.substring(4, 6);
-                                setNewEducation({...newEducation, to: `${year}/${month}`});
+                                setNewEducation({ ...newEducation, to: `${year}/${month}` });
                               }
                             }
                           }}
@@ -2421,18 +2434,18 @@ export default function UserProfile() {
                       <span className="font-medium text-gray-900">{calculateProfileCompletion()}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-500" 
+                      <div
+                        className="bg-blue-600 h-2 rounded-full transition-all duration-500"
                         style={{ width: `${calculateProfileCompletion()}%` }}
                       ></div>
                     </div>
                   </div>
                   <p className="text-xs text-gray-600 mb-3">
-                    {calculateProfileCompletion() === 100 
-                      ? 'Your profile is complete! Great job!' 
+                    {calculateProfileCompletion() === 100
+                      ? 'Your profile is complete! Great job!'
                       : 'Your profile is still incomplete. Add more information to reach 100%.'}
                   </p>
-                  <button 
+                  <button
                     onClick={() => setIsEditing(true)}
                     className="w-full px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
                   >

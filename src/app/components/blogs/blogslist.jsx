@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Search, 
+import {
+  Search,
   Filter,
   Calendar,
   User,
@@ -159,7 +159,7 @@ export default function BlogList() {
                     type="text"
                     required
                     value={newBlog.title}
-                    onChange={(e) => setNewBlog({...newBlog, title: e.target.value})}
+                    onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
                     placeholder="e.g., Bridge Design Checklist"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -171,7 +171,7 @@ export default function BlogList() {
                     <select
                       required
                       value={newBlog.category}
-                      onChange={(e) => setNewBlog({...newBlog, category: e.target.value})}
+                      onChange={(e) => setNewBlog({ ...newBlog, category: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select category</option>
@@ -188,7 +188,7 @@ export default function BlogList() {
                     <input
                       type="text"
                       value={newBlog.readTime}
-                      onChange={(e) => setNewBlog({...newBlog, readTime: e.target.value})}
+                      onChange={(e) => setNewBlog({ ...newBlog, readTime: e.target.value })}
                       placeholder="e.g., 5 min"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -199,7 +199,7 @@ export default function BlogList() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Excerpt</label>
                   <textarea
                     value={newBlog.excerpt}
-                    onChange={(e) => setNewBlog({...newBlog, excerpt: e.target.value})}
+                    onChange={(e) => setNewBlog({ ...newBlog, excerpt: e.target.value })}
                     placeholder="Brief description..."
                     rows={2}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -211,7 +211,7 @@ export default function BlogList() {
                   <textarea
                     required
                     value={newBlog.content}
-                    onChange={(e) => setNewBlog({...newBlog, content: e.target.value})}
+                    onChange={(e) => setNewBlog({ ...newBlog, content: e.target.value })}
                     placeholder="Write your article content..."
                     rows={8}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -223,7 +223,7 @@ export default function BlogList() {
                   <input
                     type="text"
                     value={newBlog.tags}
-                    onChange={(e) => setNewBlog({...newBlog, tags: e.target.value})}
+                    onChange={(e) => setNewBlog({ ...newBlog, tags: e.target.value })}
                     placeholder="e.g., Engineering, Design, Tips"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -234,7 +234,7 @@ export default function BlogList() {
                   <input
                     type="url"
                     value={newBlog.image}
-                    onChange={(e) => setNewBlog({...newBlog, image: e.target.value})}
+                    onChange={(e) => setNewBlog({ ...newBlog, image: e.target.value })}
                     placeholder="https://..."
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -268,10 +268,14 @@ export default function BlogList() {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Articles & Blogs</h1>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Technical Articles & Engineering Blogs
+                  </h1>
                   <p className="text-sm text-gray-600 mt-1">
-                    Engineering insights, case studies, and expert perspectives
+                    In-depth technical insights, engineering case studies, design methodologies,
+                    industry best practices, and professional perspectives.
                   </p>
+
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -315,11 +319,10 @@ export default function BlogList() {
                       setSelectedCategory(cat);
                       setCurrentPage(1);
                     }}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedCategory === cat
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === cat
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
+                      }`}
                   >
                     {cat}
                   </button>
@@ -431,11 +434,10 @@ export default function BlogList() {
                         <button
                           key={pageNum}
                           onClick={() => setCurrentPage(pageNum)}
-                          className={`w-10 h-10 rounded-lg font-medium ${
-                            currentPage === pageNum
+                          className={`w-10 h-10 rounded-lg font-medium ${currentPage === pageNum
                               ? 'bg-blue-600 text-white'
                               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          }`}
+                            }`}
                         >
                           {pageNum}
                         </button>

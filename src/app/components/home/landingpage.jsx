@@ -9,7 +9,6 @@ import {
   Calendar,
   MapPin,
   Quote,
-  CheckCircle,
   Sparkles,
   TrendingUp,
   Award,
@@ -21,9 +20,8 @@ import {
   Linkedin,
   Twitter,
   Instagram,
-  Facebook,
+  Facebook
 } from "lucide-react";
-import Link from "next/link";
 
 export default function KEALandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -42,47 +40,44 @@ export default function KEALandingPage() {
     {
       icon: Briefcase,
       title: "Job Portal",
-      description:
-        "Access exclusive engineering opportunities worldwide. Find your next role or hire top talent from our community.",
-      gradient: "from-blue-500 to-cyan-500",
+      description: "Access exclusive engineering opportunities worldwide. Find your next role or hire top talent from our community.",
+      gradient: "from-teal-600 to-emerald-600",
+      borderColor: "border-teal-500",
       delay: "0",
     },
     {
       icon: Users,
       title: "Networking",
-      description:
-        "Connect with mentors, industry leaders, and peers. Build relationships that last a lifetime.",
-      gradient: "from-purple-500 to-pink-500",
+      description: "Connect with mentors, industry leaders, and peers. Build relationships that last a lifetime.",
+      gradient: "from-orange-500 to-red-500",
+      borderColor: "border-orange-500",
       delay: "100",
     },
     {
       icon: BookOpen,
       title: "Educational Resources",
-      description:
-        "Stay ahead with our technical library, expert-led webinars, and industry articles.",
-      gradient: "from-orange-500 to-red-500",
+      description: "Stay ahead with our technical library, expert-led webinars, and industry articles.",
+      gradient: "from-emerald-600 to-teal-600",
+      borderColor: "border-emerald-500",
       delay: "200",
     },
   ];
 
   const testimonials = [
     {
-      quote:
-        "KEA helped me find my first job in Dubai. The mentorship program was invaluable for my career transition.",
+      quote: "KEA helped me find my first job in Dubai. The mentorship program was invaluable for my career transition.",
       author: "Ahmed K.",
       role: "Civil Engineer",
       rating: 5,
     },
     {
-      quote:
-        "A fantastic platform for networking. I've connected with senior engineers who provided great guidance.",
+      quote: "A fantastic platform for networking. I've connected with senior engineers who provided great guidance.",
       author: "Sanya M.",
       role: "Software Developer",
       rating: 5,
     },
     {
-      quote:
-        "The webinars and technical resources are top-notch. It's great to see a community so focused on growth.",
+      quote: "The webinars and technical resources are top-notch. It's great to see a community so focused on growth.",
       author: "Fahad R.",
       role: "Mechanical Lead",
       rating: 5,
@@ -99,7 +94,7 @@ export default function KEALandingPage() {
       location: "Mumbai, India",
       attendees: "500+",
       action: "Register Now",
-      color: "blue",
+      color: "teal",
     },
     {
       date: "23",
@@ -110,7 +105,7 @@ export default function KEALandingPage() {
       location: "Virtual",
       attendees: "1000+",
       action: "Join Online",
-      color: "purple",
+      color: "orange",
     },
     {
       date: "06",
@@ -121,15 +116,15 @@ export default function KEALandingPage() {
       location: "Dubai, UAE",
       attendees: "300+",
       action: "RSVP",
-      color: "orange",
+      color: "emerald",
     },
   ];
 
   const stats = [
-    { label: "Active Members", value: "10,000+", icon: Users },
-    { label: "Job Placements", value: "2,500+", icon: Briefcase },
-    { label: "Partner Companies", value: "500+", icon: Globe },
-    { label: "Success Rate", value: "95%", icon: TrendingUp },
+    { label: "Active Members", value: "10,000+", icon: Users, color: "teal" },
+    { label: "Job Placements", value: "2,500+", icon: Briefcase, color: "orange" },
+    { label: "Partner Companies", value: "500+", icon: Globe, color: "emerald" },
+    { label: "Success Rate", value: "95%", icon: TrendingUp, color: "teal" },
   ];
 
   const handleSubscribe = (e) => {
@@ -139,96 +134,54 @@ export default function KEALandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Navigation */}
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-gradient-to-r from-teal-500 to-cyan-500 shadow-lg"
-            : "bg-gradient-to-r from-teal-500 to-cyan-500"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group ">
-              <img
-                src="/logo1.png"
-                alt="KEA Logo"
-                className="h-16 object-cover transition-transform group-hover:scale-110"
-              />
-            </Link>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-gradient-to-r from-teal-600 to-emerald-600 shadow-2xl" : "bg-gradient-to-r from-teal-600 to-emerald-600"}`}>
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-20 md:h-24">
+            <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+              <img src="/logo1.png" alt="KEA Logo" className="h-12 sm:h-16 md:h-20 object-cover transition-transform hover:scale-110 drop-shadow-lg" />
+              
+            </div>
 
-            {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
-              {["Home", "About KEA", "Career Portal", "Knowledge Hub", "Events", "Contact"].map(
-                (item, index) => (
-                  <Link
-                    key={index}
-                    href={`#${item.toLowerCase().replace(" ", "-")}`}
-                    className="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-all"
-                  >
-                    {item}
-                  </Link>
-                )
-              )}
+              {["Home", "About", "Career Portal", "Resources", "Events", "Contact"].map((item, index) => (
+                <a key={index} href={`#${item.toLowerCase().replace(" ", "-")}`} className="px-3 xl:px-4 py-2 text-sm xl:text-base text-white hover:bg-white/20 font-semibold rounded-lg transition-all">
+                  {item}
+                </a>
+              ))}
             </div>
 
-            {/* CTA Button */}
-            <div className="hidden md:flex items-center gap-3">
-              <Link
-                href="/login"
-                className="px-5 py-2.5 text-gray-700 hover:text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-all"
-              >
+            <div className="hidden md:flex items-center gap-2 lg:gap-3">
+              <a href="#login" className="px-3 lg:px-5 py-2 lg:py-2.5 text-sm lg:text-base text-white hover:bg-white/20 font-semibold rounded-lg transition-all">
                 Sign In
-              </Link>
-              <Link
-                href="/register"
-                className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-semibold hover:shadow-xl hover:scale-105 transition-all"
-              >
+              </a>
+              <a href="#register" className="px-4 lg:px-6 py-2 lg:py-3 text-sm lg:text-base bg-orange-500 text-white rounded-lg font-bold hover:bg-orange-600 hover:shadow-2xl hover:scale-105 transition-all border-2 border-white/30">
                 Join KEA
-              </Link>
+              </a>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-white hover:bg-white/20 rounded-lg transition-colors">
+              {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-200 shadow-xl">
-            <div className="px-4 py-6 space-y-2 max-h-[calc(100vh-80px)] overflow-y-auto">
-              {["Home", "About KEA", "Career Portal", "Knowledge Hub", "Events", "Contact"].map(
-                (item, index) => (
-                  <Link
-                    key={index}
-                    href={`#${item.toLowerCase().replace(" ", "-")}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition-all"
-                  >
-                    {item}
-                  </Link>
-                )
-              )}
-              <div className="pt-4 space-y-2">
-                <Link
-                  href="/login"
-                  className="block px-4 py-3 text-center text-gray-700 border-2 border-gray-300 rounded-lg font-semibold hover:border-blue-600 hover:text-blue-600 transition-all"
-                >
+          <div className="lg:hidden bg-slate-900 border-t border-white/10 shadow-2xl">
+            <div className="px-3 sm:px-4 py-4 sm:py-6 space-y-2 max-h-screen overflow-y-auto" style={{ maxHeight: 'calc(100vh - 64px)' }}>
+              {["Home", "About", "Career Portal", "Resources", "Events", "Contact"].map((item, index) => (
+                <a key={index} href={`#${item.toLowerCase().replace(" ", "-")}`} onClick={() => setMobileMenuOpen(false)} className="block px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white hover:bg-teal-600 rounded-lg font-semibold transition-all">
+                  {item}
+                </a>
+              ))}
+              <div className="pt-3 sm:pt-4 space-y-2">
+                <a href="#login" className="block px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-center text-white border-2 border-white/30 rounded-lg font-semibold hover:bg-white/10 transition-all">
                   Sign In
-                </Link>
-                <Link
-                  href="/register"
-                  className="block px-4 py-3 text-center bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-semibold"
-                >
-                  Join KEA
-                </Link>
+                </a>
+                <a href="#register" className="block px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-center bg-orange-500 text-white rounded-lg font-bold hover:bg-orange-600">
+                  Join KEA Now
+                </a>
               </div>
             </div>
           </div>
@@ -236,187 +189,199 @@ export default function KEALandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section
-        id="home"
-        className="pt-32 sm:pt-36 lg:pt-40 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-cyan-50 relative overflow-hidden"
-      >
-        {/* Background Decorations */}
-        <div className="absolute top-20 right-10 w-72 h-72 bg-blue-200 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-10 left-10 w-96 h-96 bg-cyan-200 rounded-full blur-3xl opacity-20 animate-pulse delay-1000"></div>
+      <section id="home" className="pt-20 sm:pt-28 md:pt-36 lg:pt-44 pb-12 sm:pb-16 md:pb-20 lg:pb-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-br from-sky-50 via-white to-teal-50 relative overflow-hidden">
+        <div className="absolute top-10 sm:top-20 right-5 sm:right-10 w-48 sm:w-64 md:w-80 h-48 sm:h-64 md:h-80 bg-teal-300 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+        <div className="absolute bottom-5 sm:bottom-10 left-5 sm:left-10 w-56 sm:w-72 md:w-96 h-56 sm:h-72 md:h-96 bg-orange-200 rounded-full blur-3xl opacity-25 animate-pulse"></div>
+        <div className="absolute top-1/2 left-1/2 w-48 sm:w-56 md:w-72 h-48 sm:h-56 md:h-72 bg-emerald-200 rounded-full blur-3xl opacity-20"></div>
 
         <div className="max-w-7xl mx-auto relative">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6 animate-bounce">
-              <Sparkles className="w-4 h-4" />
-              Connecting Kokani Engineers Worldwide
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-800 rounded-full text-xs sm:text-sm font-bold mb-4 sm:mb-6 md:mb-8 shadow-lg border-2 border-teal-300 animate-bounce">
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+              <span className="hidden sm:inline">Connecting Kokani Engineers Worldwide</span>
+              <span className="sm:hidden">KEA Worldwide</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-              Welcome to{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                KEA
-              </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 mb-3 sm:mb-4 md:mb-6 leading-tight px-2" style={{ textShadow: '0 2px 20px rgba(13, 148, 136, 0.3)' }}>
+              Welcome to <span className="bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">KEA</span>
             </h1>
 
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed px-4">
-              Your premier community for professional networking, global job
-              opportunities, and engineering knowledge sharing.
+            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-teal-700 mb-3 sm:mb-4 px-2">
+              Kokani Engineers Association
+            </div>
+
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-700 mb-6 sm:mb-8 md:mb-12 leading-relaxed px-3 sm:px-4 font-medium">
+              Your premier community for professional networking, global job opportunities, and engineering excellence.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-4">
-              <Link
-                href="/register"
-                className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-semibold hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 text-lg"
-              >
-                Join Now
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              {/* <Link
-                href="/Jobs"
-                className="w-full sm:w-auto px-8 py-4 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:border-blue-600 hover:text-blue-600 hover:shadow-lg transition-all text-lg"
-              >
-                Explore Jobs
-              </Link> */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 md:gap-5 px-3 sm:px-4">
+              <a href="#register" className="px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 text-base sm:text-lg md:text-xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl md:rounded-2xl font-bold hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 sm:gap-3 border-2 sm:border-4 border-teal-700">
+                <span>Join KEA Today</span>
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+              </a>
+              <a href="#about" className="px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 text-base sm:text-lg md:text-xl bg-white border-2 sm:border-4 border-orange-500 text-orange-600 rounded-xl md:rounded-2xl font-bold hover:bg-orange-50 hover:shadow-xl hover:scale-105 transition-all">
+                Learn More
+              </a>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mt-12 sm:mt-16 px-4">
-              {stats.map((stat, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
-                >
-                  <stat.icon className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600 mx-auto mb-3" />
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-                    {stat.value}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8 mt-8 sm:mt-12 md:mt-16 lg:mt-20 px-2 sm:px-4 md:px-6">
+              {stats.map((stat, index) => {
+                const StatIcon = stat.icon;
+
+                const borderColor =
+                  stat.color === "teal"
+                    ? "border-l-teal-600 text-teal-600"
+                    : stat.color === "orange"
+                      ? "border-l-orange-500 text-orange-500"
+                      : "border-l-emerald-600 text-emerald-600";
+
+                return (
+                  <div
+                    key={index}
+                    className={`bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-7 
+        shadow-lg hover:shadow-2xl transition-all duration-300 
+        hover:-translate-y-1 sm:hover:-translate-y-2 
+        border-l-4 ${borderColor}`}
+                  >
+                    {/* Icon */}
+                    <StatIcon
+                      className={`w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 
+          mx-auto mb-2 sm:mb-3`}
+                    />
+
+                    {/* Value */}
+                    <div className="text-sm sm:text-xl md:text-2xl lg:text-3xl  font-extrabold text-gray-900 leading-tight">
+                      {stat.value}
+                    </div>
+
+                    {/* Label */}
+                    <div className="mt-1 text-[10px] sm:text-xs md:text-sm lg:text-base font-semibold text-gray-600 text-center">
+                      {stat.label}
+                    </div>
                   </div>
-                  <div className="text-xs sm:text-sm text-gray-600">{stat.label}</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
+
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="about" className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="about" className="py-12 sm:py-16 md:py-20 lg:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16 lg:mb-20">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
+              <div className="h-0.5 sm:h-1 w-12 sm:w-16 md:w-20 bg-gradient-to-r from-transparent to-teal-600"></div>
+              <Award className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-orange-500" />
+              <div className="h-0.5 sm:h-1 w-12 sm:w-16 md:w-20 bg-gradient-to-l from-transparent to-teal-600"></div>
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-gray-900 mb-3 sm:mb-4 md:mb-6 px-2">
               What KEA Offers
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
-              Everything you need to advance your engineering career and connect
-              with your community.
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-600 max-w-3xl mx-auto px-3 sm:px-4 font-medium">
+              Everything you need to advance your engineering career and connect with your community.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="group bg-white border-2 border-gray-200 rounded-2xl p-6 sm:p-8 hover:shadow-2xl hover:-translate-y-2 hover:border-blue-300 transition-all duration-300"
-                style={{ animationDelay: `${feature.delay}ms` }}
-              >
-                <div
-                  className={`w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300`}
-                >
-                  <feature.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
+            {features.map((feature, index) => {
+              const FeatureIcon = feature.icon;
+              return (
+                <div key={index} className={`group bg-white border-l-4 sm:border-l-8 ${feature.borderColor} rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-8 lg:p-10 hover:shadow-2xl hover:-translate-y-1 sm:hover:-translate-y-3 transition-all duration-300 shadow-lg`}>
+                  <div className={`w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-br ${feature.gradient} rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-5 md:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shadow-xl`}>
+                    <FeatureIcon className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-white" />
+                  </div>
+                  <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-900 mb-3 sm:mb-4">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* Mission Section */}
-      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50">
+      <section className="py-12 sm:py-16 md:py-20 lg:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-br from-teal-50 via-sky-50 to-emerald-50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6">
-              <Award className="w-4 h-4" />
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 bg-orange-100 text-orange-700 rounded-full text-xs sm:text-sm md:text-base font-bold mb-6 sm:mb-8 shadow-lg border-2 border-orange-300">
+              <Award className="w-4 h-4 sm:w-5 sm:h-5" />
               Our Purpose
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-8">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-gray-900 mb-6 sm:mb-8 md:mb-10 px-2">
               Our Mission
             </h2>
-            <p className="text-lg sm:text-xl text-gray-700 leading-relaxed max-w-4xl mx-auto mb-12">
-              The Kokani Engineers Association (KEA) is dedicated to uniting
-              engineers from our community on a single global platform. Our
-              mission is to foster professional growth, facilitate meaningful
-              connections, and provide resources that empower every member to
-              achieve excellence in their field.
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-700 leading-relaxed max-w-4xl mx-auto mb-10 sm:mb-12 md:mb-16 px-3 sm:px-4 font-medium">
+              The Kokani Engineers Association (KEA) is dedicated to uniting engineers from our community on a single global platform. Our mission is to foster professional growth, facilitate meaningful connections, and provide resources that empower every member to achieve excellence in their field.
             </p>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8">
               {[
-                { icon: Globe, title: "Global Network", desc: "Connect with engineers worldwide", color: "blue" },
-                { icon: TrendingUp, title: "Career Growth", desc: "Advance your professional journey", color: "purple" },
-                { icon: Award, title: "Excellence", desc: "Achieve greatness in your field", color: "orange" },
-              ].map((item, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all"
-                >
-                  <item.icon className={`w-10 h-10 sm:w-12 sm:h-12 text-${item.color}-600 mx-auto mb-4`} />
-                  <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{item.title}</h4>
-                  <p className="text-sm sm:text-base text-gray-600">{item.desc}</p>
-                </div>
-              ))}
+                { icon: Globe, title: "Global Network", desc: "Connect with engineers worldwide", gradient: "from-teal-600 to-emerald-600" },
+                { icon: TrendingUp, title: "Career Growth", desc: "Advance your professional journey", gradient: "from-orange-500 to-red-500" },
+                { icon: Award, title: "Excellence", desc: "Achieve greatness in your field", gradient: "from-emerald-600 to-teal-600" },
+              ].map((item, index) => {
+                const ItemIcon = item.icon;
+                return (
+                  <div key={index} className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-8 lg:p-10 shadow-xl hover:shadow-2xl hover:-translate-y-1 sm:hover:-translate-y-3 transition-all border-t-4 border-t-teal-600">
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto mb-4 sm:mb-5 md:mb-6 bg-gradient-to-br ${item.gradient} rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg`}>
+                      <ItemIcon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
+                    </div>
+                    <h4 className="text-base sm:text-lg md:text-xl lg:text-2xl font-black text-gray-900 mb-2 sm:mb-3">{item.title}</h4>
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 font-medium">{item.desc}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-12 sm:py-16 md:py-20 lg:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16 lg:mb-20">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
+              <div className="h-0.5 sm:h-1 w-12 sm:w-16 md:w-20 bg-gradient-to-r from-transparent to-orange-500"></div>
+              <Quote className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-teal-600" />
+              <div className="h-0.5 sm:h-1 w-12 sm:w-16 md:w-20 bg-gradient-to-l from-transparent to-orange-500"></div>
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-gray-900 mb-3 sm:mb-4 md:mb-6 px-2">
               What Our Members Say
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-600 font-medium px-3">
               Hear from engineers who have grown with KEA.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8 lg:gap-10">
             {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 sm:p-8 relative hover:shadow-2xl hover:-translate-y-2 transition-all border-2 border-blue-100"
-              >
-                <Quote className="w-10 h-10 text-blue-600 mb-4 opacity-30" />
-                <p className="text-gray-700 italic mb-6 leading-relaxed text-sm sm:text-base">
+              <div key={index} className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-8 lg:p-10 relative hover:shadow-2xl hover:-translate-y-1 sm:hover:-translate-y-3 transition-all border-2 sm:border-4 border-teal-200">
+                <Quote className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-teal-600 mb-4 sm:mb-5 md:mb-6 opacity-40" />
+                <p className="text-gray-800 italic mb-5 sm:mb-6 md:mb-8 leading-relaxed text-xs sm:text-sm md:text-base lg:text-lg font-medium">
                   &ldquo;{testimonial.quote}&rdquo;
                 </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-full flex items-center justify-center text-white font-black text-base sm:text-lg md:text-xl shadow-lg shrink-0">
                     {testimonial.author.charAt(0)}
                   </div>
                   <div>
-                    <div className="font-bold text-gray-900">
+                    <div className="font-black text-gray-900 text-sm sm:text-base md:text-lg">
                       {testimonial.author}
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-xs sm:text-sm text-gray-600 font-semibold">
                       {testimonial.role}
                     </div>
                   </div>
                 </div>
-                {/* Star Rating */}
-                <div className="flex gap-1 mt-4">
+                <div className="flex gap-1 mt-4 sm:mt-5">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className="w-5 h-5 text-yellow-400 fill-current"
-                      viewBox="0 0 20 20"
-                    >
+                    <svg key={i} className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-orange-500 fill-current" viewBox="0 0 20 20">
                       <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                     </svg>
                   ))}
@@ -427,81 +392,61 @@ export default function KEALandingPage() {
         </div>
       </section>
 
-      {/* Events Section - FIXED LAYOUT */}
-      <section id="events" className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      {/* Events Section */}
+      <section id="events" className="py-12 sm:py-16 md:py-20 lg:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-sky-50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16 lg:mb-20">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
+              <div className="h-0.5 sm:h-1 w-12 sm:w-16 md:w-20 bg-gradient-to-r from-transparent to-teal-600"></div>
+              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-orange-500" />
+              <div className="h-0.5 sm:h-1 w-12 sm:w-16 md:w-20 bg-gradient-to-l from-transparent to-teal-600"></div>
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-gray-900 mb-3 sm:mb-4 md:mb-6 px-2">
               Upcoming Events
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-600 font-medium px-3">
               Join our seminars, workshops, and meetups.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8 lg:gap-10">
             {upcomingEvents.map((event, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all group"
-              >
-                {/* Top Color Bar */}
-                <div
-                  className={`h-2 bg-gradient-to-r ${
-                    event.color === "blue"
-                      ? "from-blue-600 to-cyan-600"
-                      : event.color === "purple"
-                      ? "from-purple-600 to-pink-600"
-                      : "from-orange-600 to-red-600"
-                  }`}
-                ></div>
+              <div key={index} className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl hover:-translate-y-1 sm:hover:-translate-y-3 transition-all group">
+                <div className={`h-2 sm:h-3 bg-gradient-to-r ${event.color === "teal" ? "from-teal-600 to-emerald-600" : event.color === "orange" ? "from-orange-500 to-red-500" : "from-emerald-600 to-teal-600"}`}></div>
 
-                <div className="p-6 sm:p-8">
-                  {/* Date Badge and Type - Side by Side */}
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 text-center min-w-[80px] border-2 border-blue-200 shrink-0">
-                      <div className="text-3xl font-bold text-gray-900">{event.date}</div>
-                      <div className="text-sm font-semibold text-gray-600 uppercase">
-                        {event.month}
-                      </div>
-                      <div className="text-xs text-gray-500">{event.year}</div>
+                <div className="p-5 sm:p-6 md:p-8 lg:p-10">
+                  <div className="flex items-start gap-3 sm:gap-4 md:gap-5 mb-4 sm:mb-5 md:mb-6">
+                    <div className={`rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 text-center min-w-[70px] sm:min-w-[80px] md:min-w-[90px] border-2 sm:border-4 shadow-lg shrink-0 ${event.color === "teal" ? "bg-gradient-to-br from-teal-50 to-emerald-50 border-teal-300" : event.color === "orange" ? "bg-gradient-to-br from-orange-50 to-red-50 border-orange-300" : "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-300"}`}>
+                      <div className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900">{event.date}</div>
+                      <div className="text-xs sm:text-sm font-bold text-gray-600 uppercase">{event.month}</div>
+                      <div className="text-xs text-gray-500 font-semibold" style={{ fontSize: '10px' }}>{event.year}</div>
                     </div>
 
-                    {/* Event Type Badge */}
-                    <div className="flex-1 pt-2">
-                      <span className={`inline-block px-3 py-1.5 rounded-full text-xs font-semibold ${
-                        event.color === "blue"
-                          ? "bg-blue-100 text-blue-700"
-                          : event.color === "purple"
-                          ? "bg-purple-100 text-purple-700"
-                          : "bg-orange-100 text-orange-700"
-                      }`}>
+                    <div className="flex-1 pt-1 sm:pt-2">
+                      <span className={`inline-block px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full text-xs sm:text-sm font-bold shadow-md ${event.color === "teal" ? "bg-teal-100 text-teal-800 border-2 border-teal-300" : event.color === "orange" ? "bg-orange-100 text-orange-800 border-2 border-orange-300" : "bg-emerald-100 text-emerald-800 border-2 border-emerald-300"}`}>
                         {event.type}
                       </span>
                     </div>
                   </div>
 
-                  {/* Event Title - Fixed Height */}
-                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors min-h-[64px]">
+                  <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-black text-gray-900 mb-4 sm:mb-5 md:mb-6 group-hover:text-teal-600 transition-colors min-h-[48px] sm:min-h-[56px] md:min-h-[72px]">
                     {event.title}
                   </h3>
 
-                  {/* Event Details */}
-                  <div className="space-y-2 mb-6 text-sm sm:text-base">
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <MapPin className="w-4 h-4 shrink-0" />
+                  <div className="space-y-2 sm:space-y-3 mb-5 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base lg:text-lg">
+                    <div className="flex items-center gap-2 sm:gap-3 text-gray-700 font-semibold">
+                      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600 shrink-0" />
                       <span className="truncate">{event.location}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Users className="w-4 h-4 shrink-0" />
+                    <div className="flex items-center gap-2 sm:gap-3 text-gray-700 font-semibold">
+                      <Users className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 shrink-0" />
                       <span>{event.attendees} Attendees</span>
                     </div>
                   </div>
 
-                  {/* Action Button */}
-                  <button className="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 group-hover:scale-105">
+                  <button className={`w-full py-2.5 sm:py-3 md:py-4 rounded-xl sm:rounded-2xl text-white font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2 sm:gap-3 group-hover:scale-105 text-sm sm:text-base md:text-lg ${event.color === "teal" ? "bg-gradient-to-r from-teal-600 to-emerald-600" : event.color === "orange" ? "bg-gradient-to-r from-orange-500 to-red-500" : "bg-gradient-to-r from-emerald-600 to-teal-600"}`}>
                     {event.action}
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 sm:group-hover:translate-x-2 transition-transform" />
                   </button>
                 </div>
               </div>
@@ -511,146 +456,117 @@ export default function KEALandingPage() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-cyan-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
+      <section className="py-12 sm:py-16 md:py-20 lg:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-br from-teal-600 via-emerald-600 to-teal-700 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+        </div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <Mail className="w-16 h-16 text-white mx-auto mb-6 animate-bounce" />
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-white/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-2xl">
+            <Mail className="w-7 h-7 sm:w-9 sm:h-9 md:w-12 md:h-12 text-white" />
+          </div>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white mb-4 sm:mb-6 px-2">
             Stay Connected
           </h2>
-          <p className="text-lg sm:text-xl text-blue-100 mb-8 px-4">
-            Subscribe to our newsletter for the latest updates, job
-            opportunities, and event announcements.
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-sky-100 mb-8 sm:mb-10 md:mb-12 px-3 sm:px-4 font-medium">
+            Subscribe to our newsletter for the latest updates, job opportunities, and event announcements.
           </p>
 
-          <form
-            onSubmit={handleSubscribe}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-xl mx-auto"
-          >
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
-              className="flex-1 px-5 sm:px-6 py-3 sm:py-4 rounded-xl bg-white border-2 border-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-blue-400 transition-all"
-            />
-            <button
-              type="submit"
-              className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-blue-600 rounded-xl font-semibold hover:bg-gray-100 hover:scale-105 transition-all flex items-center justify-center gap-2 shadow-xl"
-            >
-              Subscribe
-              <ArrowRight className="w-5 h-5" />
+          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-5 max-w-2xl mx-auto px-2">
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" required className="flex-1 px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-orange-300 shadow-xl font-semibold text-sm sm:text-base md:text-lg" />
+            <button type="submit" className="px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-orange-500 text-white rounded-xl sm:rounded-2xl font-bold hover:bg-orange-600 hover:scale-105 transition-all flex items-center justify-center gap-2 sm:gap-3 shadow-2xl border-2 border-white/30 text-sm sm:text-base md:text-lg">
+              <span className="hidden sm:inline">Subscribe Now</span>
+              <span className="sm:hidden">Subscribe</span>
+              <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </form>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+      <footer className="bg-slate-900 text-white py-10 sm:py-12 md:py-16 lg:py-20 px-3 sm:px-4 md:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-12">
-            {/* Company Info */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-12 mb-10 sm:mb-12 md:mb-16">
             <div className="sm:col-span-2 lg:col-span-1">
-              <div className="flex items-center gap-3 mb-4">
-                <img
-                  src="/logo1.png"
-                  alt="KEA Logo"
-                  className="h-20 object-cover"
-                />
+              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <img src="/logo1.png" alt="KEA Logo" className="h-16 sm:h-20 md:h-24 object-cover drop-shadow-2xl" />
               </div>
-              <p className="text-gray-400 leading-relaxed mb-6">
-                Connecting engineers, creating opportunities, and fostering a
-                stronger community together.
+            
+              <p className="text-xs sm:text-sm md:text-base text-gray-400 leading-relaxed mb-5 sm:mb-6 font-medium">
+                Connecting engineers, creating opportunities, and fostering a stronger community together.
               </p>
-              <div className="flex gap-3">
+              <div className="flex gap-2 sm:gap-3">
                 {[
                   { icon: Linkedin, href: "#" },
                   { icon: Twitter, href: "#" },
                   { icon: Instagram, href: "#" },
                   { icon: Facebook, href: "#" },
-                ].map((social, index) => (
-                  <Link
-                    key={index}
-                    href={social.href}
-                    className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-all hover:scale-110"
-                  >
-                    <social.icon className="w-5 h-5" />
-                  </Link>
-                ))}
+                ].map((social, index) => {
+                  const SocialIcon = social.icon;
+                  return (
+                    <a key={index} href={social.href} className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-800 rounded-lg sm:rounded-xl flex items-center justify-center hover:bg-gradient-to-br hover:from-teal-600 hover:to-emerald-600 transition-all hover:scale-110 shadow-lg">
+                      <SocialIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </a>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Company Links */}
             <div>
-              <h3 className="text-lg font-bold mb-4">Company</h3>
-              <ul className="space-y-3">
+              <h3 className="text-base sm:text-lg md:text-xl font-black mb-4 sm:mb-6 text-teal-400">Company</h3>
+              <ul className="space-y-2 sm:space-y-3 md:space-y-4">
                 {["About KEA", "Career Portal", "Events", "Contact"].map((item, index) => (
                   <li key={index}>
-                    <Link
-                      href={`#${item.toLowerCase().replace(" ", "-")}`}
-                      className="text-gray-400 hover:text-white transition-colors hover:translate-x-1 inline-block"
-                    >
+                    <a href={`#${item.toLowerCase().replace(" ", "-")}`} className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-400 hover:text-white transition-colors hover:translate-x-1 sm:hover:translate-x-2 inline-block font-semibold">
                       {item}
-                    </Link>
+                    </a>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Resources Links */}
             <div>
-              <h3 className="text-lg font-bold mb-4">Resources</h3>
-              <ul className="space-y-3">
+              <h3 className="text-base sm:text-lg md:text-xl font-black mb-4 sm:mb-6 text-orange-400">Resources</h3>
+              <ul className="space-y-2 sm:space-y-3 md:space-y-4">
                 {["Job Portal", "Blog", "Knowledge Hub", "Privacy Policy"].map((item, index) => (
                   <li key={index}>
-                    <Link
-                      href={`/${item.toLowerCase().replace(" ", "-")}`}
-                      className="text-gray-400 hover:text-white transition-colors hover:translate-x-1 inline-block"
-                    >
+                    <a href={`/${item.toLowerCase().replace(" ", "-")}`} className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-400 hover:text-white transition-colors hover:translate-x-1 sm:hover:translate-x-2 inline-block font-semibold">
                       {item}
-                    </Link>
+                    </a>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Contact Info */}
             <div>
-              <h3 className="text-lg font-bold mb-4">Contact</h3>
-              <ul className="space-y-3 text-gray-400">
-                <li className="flex items-start gap-2">
-                  <Mail className="w-5 h-5 mt-0.5 shrink-0" />
-                  <a href="mailto:info@kea.com" className="hover:text-white transition-colors">
+              <h3 className="text-base sm:text-lg md:text-xl font-black mb-4 sm:mb-6 text-emerald-400">Contact</h3>
+              <ul className="space-y-3 sm:space-y-4 text-gray-400">
+                <li className="flex items-start gap-2 sm:gap-3">
+                  <Mail className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mt-0.5 shrink-0 text-teal-400" />
+                  <a href="mailto:info@kea.com" className="text-xs sm:text-sm md:text-base lg:text-lg hover:text-white transition-colors font-semibold break-all">
                     info@kea.com
                   </a>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Phone className="w-5 h-5 mt-0.5 shrink-0" />
-                  <a href="tel:+1234567890" className="hover:text-white transition-colors">
+                <li className="flex items-start gap-2 sm:gap-3">
+                  <Phone className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mt-0.5 shrink-0 text-orange-400" />
+                  <a href="tel:+1234567890" className="text-xs sm:text-sm md:text-base lg:text-lg hover:text-white transition-colors font-semibold">
                     +1 (234) 567-890
                   </a>
                 </li>
-                <li className="flex items-start gap-2">
-                  <MapPin className="w-5 h-5 mt-0.5 shrink-0" />
-                  <span>Mumbai, India</span>
+                <li className="flex items-start gap-2 sm:gap-3">
+                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mt-0.5 shrink-0 text-emerald-400" />
+                  <span className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold">Mumbai, India</span>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p className="mb-2 text-sm sm:text-base">
+          <div className="border-t border-slate-800 pt-6 sm:pt-8 md:pt-10 text-center">
+            <p className="mb-2 sm:mb-3 text-xs sm:text-sm md:text-base lg:text-lg text-gray-400 font-semibold">
               © 2025 Kokani Engineers Association. All rights reserved.
             </p>
-            <p className="text-xs sm:text-sm">
+            <p className="text-xs sm:text-sm md:text-base text-gray-500" style={{ fontSize: window.innerWidth < 375 ? '10px' : undefined }}>
               Deployed by{" "}
-              <a
-                href="https://nexcorealliance.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 transition-colors font-medium"
-              >
+              <a href="https://nexcorealliance.com/" target="_blank" rel="noopener noreferrer" className="text-teal-400 hover:text-teal-300 transition-colors font-bold">
                 NexCore Alliance
               </a>
             </p>

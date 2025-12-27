@@ -267,7 +267,7 @@ export default function UserDashboard() {
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Quick actions</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Link
-                    href="/dashboard/Jobs"
+                    href="/dashboard/documents"
                     className="flex items-center justify-between p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
                   >
                     <div>
