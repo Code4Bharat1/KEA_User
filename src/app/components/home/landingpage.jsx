@@ -153,10 +153,10 @@ export default function KEALandingPage() {
             </div>
 
             <div className="hidden md:flex items-center gap-2 lg:gap-3">
-              <a href="#login" className="px-3 lg:px-5 py-2 lg:py-2.5 text-sm lg:text-base text-white hover:bg-white/20 font-semibold rounded-lg transition-all">
+              <a href="/login" className="px-3 lg:px-5 py-2 lg:py-2.5 text-sm lg:text-base text-white hover:bg-white/20 font-semibold rounded-lg transition-all">
                 Sign In
               </a>
-              <a href="#register" className="px-4 lg:px-6 py-2 lg:py-3 text-sm lg:text-base bg-orange-500 text-white rounded-lg font-bold hover:bg-orange-600 hover:shadow-2xl hover:scale-105 transition-all border-2 border-white/30">
+              <a href="/register" className="px-4 lg:px-6 py-2 lg:py-3 text-sm lg:text-base bg-orange-500 text-white rounded-lg font-bold hover:bg-orange-600 hover:shadow-2xl hover:scale-105 transition-all border-2 border-white/30">
                 Join KEA
               </a>
             </div>
@@ -564,7 +564,7 @@ export default function KEALandingPage() {
             <p className="mb-2 sm:mb-3 text-xs sm:text-sm md:text-base lg:text-lg text-gray-400 font-semibold">
               © 2025 Kokani Engineers Association. All rights reserved.
             </p>
-            <p className="text-xs sm:text-sm md:text-base text-gray-500" style={{ fontSize: window.innerWidth < 375 ? '10px' : undefined }}>
+            <p className="text-[10px] xs:text-xs sm:text-sm md:text-base text-gray-500">
               Deployed by{" "}
               <a href="https://nexcorealliance.com/" target="_blank" rel="noopener noreferrer" className="text-teal-400 hover:text-teal-300 transition-colors font-bold">
                 NexCore Alliance

@@ -23,10 +23,11 @@ export default function SeminarList() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [seminars, setSeminars] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('Seminars & Webinars');
+  const [selectedCategory, setSelectedCategory] = useState('all'); // Changed from 'Seminars & Webinars' to 'all'
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -51,11 +52,22 @@ export default function SeminarList() {
     maxAttendees: ''
   });
 
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery]);
+
   useEffect(() => {
     fetchUserData();
+  }, []);
+
+  useEffect(() => {
     fetchSeminars();
-    fetchCategories();
   }, [selectedCategory, searchQuery, currentPage]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const fetchUserData = async () => {
     try {
@@ -66,8 +78,6 @@ export default function SeminarList() {
       setUser(res.data);
     } catch (err) {
       console.error('Error fetching user:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -75,18 +85,22 @@ export default function SeminarList() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (selectedCategory !== 'All') {
+      
+      // Only add category filter if not 'all'
+      if (selectedCategory !== 'all') {
         params.append('category', selectedCategory);
       }
+      
       if (searchQuery) {
         params.append('search', searchQuery);
       }
+      
       params.append('page', currentPage);
       params.append('limit', 10);
 
       const { data } = await axios.get(`${API_URL}/seminars?${params.toString()}`);
-      setSeminars(data.seminars);
-      setTotalPages(data.pagination.pages);
+      setSeminars(data.seminars || []);
+      setTotalPages(data.pagination?.pages || 1);
     } catch (error) {
       console.error('Error fetching seminars:', error);
       setSeminars([]);
@@ -98,7 +112,7 @@ export default function SeminarList() {
   const fetchCategories = async () => {
     try {
       const { data } = await axios.get(`${API_URL}/seminars/categories/stats`);
-      setCategories(data.categories);
+      setCategories(data.categories || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
@@ -106,7 +120,7 @@ export default function SeminarList() {
 
   const handleCreateSeminar = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setActionLoading(true);
 
     try {
       const token = localStorage.getItem('userToken');
@@ -127,7 +141,7 @@ export default function SeminarList() {
     } catch (error) {
       alert(error.response?.data?.message || 'Failed to create seminar');
     } finally {
-      setLoading(false);
+      setActionLoading(false);
     }
   };
 
@@ -151,6 +165,9 @@ export default function SeminarList() {
   };
 
   const handleRegister = async (seminarId) => {
+    if (actionLoading) return;
+    setActionLoading(true);
+    
     try {
       const token = localStorage.getItem('userToken');
       await axios.post(`${API_URL}/seminars/${seminarId}/register`, {}, {
@@ -160,6 +177,8 @@ export default function SeminarList() {
       fetchSeminars();
     } catch (error) {
       alert(error.response?.data?.message || 'Failed to register');
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -177,6 +196,15 @@ export default function SeminarList() {
     return <span className="px-2 py-1 text-xs rounded bg-green-100 text-green-700">Open</span>;
   };
 
+  const categories_list = [
+    'Seminars & Webinars',
+    'Workshops',
+    'Conferences',
+    'Training Programs',
+    'Technical Talks',
+    'Panel Discussions'
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <UserSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -190,7 +218,11 @@ export default function SeminarList() {
             <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
                 <h2 className="text-xl font-semibold text-gray-900">Create New Seminar</h2>
-                <button onClick={() => setShowCreateModal(false)} className="p-2 hover:bg-gray-100 rounded-lg">
+                <button 
+                  onClick={() => setShowCreateModal(false)} 
+                  disabled={actionLoading}
+                  className="p-2 hover:bg-gray-100 rounded-lg disabled:opacity-50"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -218,10 +250,9 @@ export default function SeminarList() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select category</option>
-                      <option value="Seminars & Webinars">Seminars & Webinars</option>
-                      <option value="Workshops">Workshops</option>
-                      <option value="Conferences">Conferences</option>
-                      <option value="Training Programs">Training Programs</option>
+                      {categories_list.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
                     </select>
                   </div>
 
@@ -342,15 +373,16 @@ export default function SeminarList() {
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
-                    disabled={loading}
-                    className="flex-1 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50"
+                    disabled={actionLoading}
+                    className="flex-1 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {loading ? 'Creating...' : 'Create Seminar'}
+                    {actionLoading ? 'Creating...' : 'Create Seminar'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
-                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
+                    disabled={actionLoading}
+                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium disabled:opacity-50"
                   >
                     Cancel
                   </button>
@@ -378,24 +410,34 @@ export default function SeminarList() {
                     <Plus className="w-4 h-4" />
                     Create
                   </button>
-                  <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium">
-                    Filter
-                  </button>
                 </div>
               </div>
 
-              {/* Category Pills */}
-              <div className="flex gap-2 mb-4">
+              {/* Category Pills - Now shows all categories */}
+              <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
                 <button
-                  onClick={() => setSelectedCategory('Seminars & Webinars')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
-                    selectedCategory === 'Seminars & Webinars'
+                  onClick={() => setSelectedCategory('all')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${
+                    selectedCategory === 'all'
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  Seminars & Webinars
+                  All ({categories.find(c => c.name === 'All')?.count || 0})
                 </button>
+                {categories.filter(c => c.name !== 'All').map((category) => (
+                  <button
+                    key={category.name}
+                    onClick={() => setSelectedCategory(category.name)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${
+                      selectedCategory === category.name
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {category.name} ({category.count})
+                  </button>
+                ))}
               </div>
 
               {/* Search */}
@@ -414,16 +456,25 @@ export default function SeminarList() {
             {/* Seminars List */}
             <div className="space-y-4">
               <div className="text-sm text-gray-600 mb-2">
-                Showing {seminars.length} of {seminars.length} upcoming seminars
+                Showing {seminars.length} seminar(s)
               </div>
 
               {loading ? (
-                <div className="flex items-center justify-center p-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="flex flex-col items-center justify-center p-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+                  <p className="text-sm text-gray-500">Loading seminars...</p>
                 </div>
               ) : seminars.length === 0 ? (
                 <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
                   <p className="text-gray-500">No seminars found</p>
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="mt-2 text-blue-600 hover:text-blue-700 text-sm"
+                    >
+                      Clear search
+                    </button>
+                  )}
                 </div>
               ) : (
                 seminars.map((seminar) => (
@@ -436,6 +487,9 @@ export default function SeminarList() {
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="text-lg font-semibold text-gray-900">{seminar.title}</h3>
                           {getStatusBadge(seminar.date, seminar.registrationDeadline)}
+                          <span className="px-2 py-1 text-xs rounded bg-purple-100 text-purple-700">
+                            {seminar.category}
+                          </span>
                         </div>
 
                         <p className="text-sm text-gray-600 mb-3">{seminar.organizer}</p>
@@ -462,24 +516,32 @@ export default function SeminarList() {
                         </div>
 
                         {seminar.attendees && (
-                          <div className="text-sm text-gray-600 mb-3">
-                            Attending: {seminar.attendees.length} of {seminar.maxAttendees || '∞'} spots
+                          <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+                            <Users className="w-4 h-4" />
+                            <span>
+                              {seminar.attendees.length} / {seminar.maxAttendees || '∞'} registered
+                            </span>
                           </div>
+                        )}
+
+                        {seminar.description && (
+                          <p className="text-sm text-gray-600 line-clamp-2">{seminar.description}</p>
                         )}
                       </div>
 
-                      <div className="flex gap-2">
+                      <div className="flex flex-col gap-2">
                         <button
                           onClick={() => router.push(`/dashboard/seminars/${seminar._id}`)}
-                          className="px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium"
+                          className="px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium whitespace-nowrap"
                         >
                           View details
                         </button>
                         <button
                           onClick={() => handleRegister(seminar._id)}
-                          className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 font-medium"
+                          disabled={actionLoading}
+                          className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 font-medium whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          Register
+                          {actionLoading ? 'Registering...' : 'Register'}
                         </button>
                       </div>
                     </div>
@@ -494,20 +556,35 @@ export default function SeminarList() {
                     Page {currentPage} of {totalPages}
                   </span>
                   <div className="flex gap-2">
-                    {[...Array(totalPages)].map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setCurrentPage(i + 1)}
-                        className={`w-8 h-8 rounded ${
-                          currentPage === i + 1
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-                    <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                    <button
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+                    {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                      const pageNum = i + 1;
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`w-8 h-8 rounded ${
+                            currentPage === pageNum
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                    {totalPages > 5 && <span className="px-2">...</span>}
+                    <button
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
                       Next
                     </button>
                   </div>
