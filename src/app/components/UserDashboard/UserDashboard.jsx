@@ -7,7 +7,10 @@ import {
   Calendar,
   ChevronRight,
   Users,
-  TrendingUp
+  TrendingUp,
+  Sparkles,
+  ArrowUpRight,
+  Clock
 } from 'lucide-react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -68,12 +71,9 @@ export default function UserDashboard() {
       const res = await axios.get(`${API_URL}/users/dashboard/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('Stats response:', res.data);
       setStats(res.data);
-      console.log('Stats state updated to:', res.data);
     } catch (err) {
       console.error('Error fetching stats:', err);
-      // Set default stats on error
       setStats({
         applications: 0,
         applicationsChange: 0,
@@ -93,17 +93,14 @@ export default function UserDashboard() {
       const res = await axios.get(`${API_URL}/users/dashboard/activity`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('Activity response:', res.data);
       
       if (res.data && res.data.length > 0) {
         setRecentActivity(res.data);
       } else {
-        // No activities yet - show empty state
         setRecentActivity([]);
       }
     } catch (err) {
       console.error('Error fetching activity:', err);
-      // Show empty state on error
       setRecentActivity([]);
     }
   };
@@ -114,7 +111,6 @@ export default function UserDashboard() {
       const res = await axios.get(`${API_URL}/users/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('Notifications response:', res.data);
       setNotifications(res.data || []);
     } catch (err) {
       console.error('Error fetching notifications:', err);
@@ -125,30 +121,30 @@ export default function UserDashboard() {
   const getActivityIcon = (type) => {
     switch(type) {
       case 'job_application':
-        return <Briefcase className="w-4 h-4 text-blue-600" />;
+        return <Briefcase className="w-4 h-4" />;
       case 'event_registration':
-        return <Calendar className="w-4 h-4 text-green-600" />;
+        return <Calendar className="w-4 h-4" />;
       case 'document_download':
-        return <FileText className="w-4 h-4 text-purple-600" />;
+        return <FileText className="w-4 h-4" />;
       case 'connection':
-        return <Users className="w-4 h-4 text-orange-600" />;
+        return <Users className="w-4 h-4" />;
       default:
-        return <TrendingUp className="w-4 h-4 text-gray-600" />;
+        return <TrendingUp className="w-4 h-4" />;
     }
   };
 
-  const getActivityBgColor = (type) => {
+  const getActivityColor = (type) => {
     switch(type) {
       case 'job_application':
-        return 'bg-blue-100';
+        return 'from-blue-500 to-blue-600';
       case 'event_registration':
-        return 'bg-green-100';
+        return 'from-green-500 to-green-600';
       case 'document_download':
-        return 'bg-purple-100';
+        return 'from-purple-500 to-purple-600';
       case 'connection':
-        return 'bg-orange-100';
+        return 'from-orange-500 to-orange-600';
       default:
-        return 'bg-gray-100';
+        return 'from-gray-500 to-gray-600';
     }
   };
 
@@ -175,17 +171,22 @@ export default function UserDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-teal-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-teal-600 mx-auto"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-teal-600 animate-pulse" />
+            </div>
+          </div>
+          <p className="mt-6 text-gray-700 font-medium">Loading your dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-teal-50 flex">
       {/* Sidebar */}
       <UserSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
@@ -198,212 +199,224 @@ export default function UserDashboard() {
         />
 
         {/* Dashboard Content */}
-        <div className="p-6">
-          {/* Welcome Message */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Welcome back, {user?.name?.split(' ')[0]}! 👋
-            </h1>
-            <p className="text-gray-600 mt-1">Here's what's happening with your KEA Profile today.</p>
+        <div className="p-6 max-w-7xl mx-auto">
+          {/* Welcome Message with Gradient */}
+          <div className="mb-8 relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0D2847] to-[#1a3a5c] p-8 shadow-xl">
+            <div className="absolute inset-0 bg-black opacity-10"></div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-6 h-6 text-yellow-300 animate-pulse" />
+                <h1 className="text-3xl font-bold text-white">
+                  Welcome back, {user?.name?.split(' ')[0]}!
+                </h1>
+              </div>
+              <p className="text-white text-opacity-90 text-lg">Here's what's happening with your KEA Profile today.</p>
+            </div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
           </div>
 
-          {/* User Summary */}
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Your summary</h2>
+          {/* Stats Cards with Enhanced Design */}
+          <div className="mb-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-teal-600" />
+              Your Summary
+            </h2>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm text-gray-600">Job Applications</p>
-                  <Briefcase className="w-5 h-5 text-blue-600" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Job Applications Card */}
+              <div className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full opacity-10 -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-500"></div>
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-medium text-gray-600">Job Applications</p>
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
+                      <Briefcase className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
+                  <p className="text-4xl font-bold text-gray-900 mb-2">{stats.applications}</p>
+                  <div className="flex items-center gap-1">
+                    <ArrowUpRight className={`w-4 h-4 ${stats.applicationsChange >= 0 ? 'text-green-500' : 'text-red-500 rotate-90'}`} />
+                    <p className={`text-sm font-semibold ${stats.applicationsChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {stats.applicationsChange >= 0 ? '+' : ''}{stats.applicationsChange}%
+                    </p>
+                    <p className="text-xs text-gray-500">from last month</p>
+                  </div>
                 </div>
-                <p className="text-3xl font-bold text-gray-900">{stats.applications}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {stats.applicationsChange >= 0 ? '+' : ''}{stats.applicationsChange}% from last month
-                </p>
               </div>
 
-              <div className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm text-gray-600">Saved Jobs</p>
-                  <FileText className="w-5 h-5 text-green-600" />
+              {/* Saved Jobs Card */}
+              <div className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full opacity-10 -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-500"></div>
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-medium text-gray-600">Saved Jobs</p>
+                    <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md">
+                      <FileText className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
+                  <p className="text-4xl font-bold text-gray-900 mb-2">{stats.savedJobs}</p>
+                  <div className="flex items-center gap-1">
+                    <ArrowUpRight className={`w-4 h-4 ${stats.savedJobsChange >= 0 ? 'text-green-500' : 'text-red-500 rotate-90'}`} />
+                    <p className={`text-sm font-semibold ${stats.savedJobsChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {stats.savedJobsChange >= 0 ? '+' : ''}{stats.savedJobsChange}%
+                    </p>
+                    <p className="text-xs text-gray-500">from last month</p>
+                  </div>
                 </div>
-                <p className="text-3xl font-bold text-gray-900">{stats.savedJobs}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {stats.savedJobsChange >= 0 ? '+' : ''}{stats.savedJobsChange}% from last month
-                </p>
               </div>
 
-              <div className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm text-gray-600">Events Registered</p>
-                  <Calendar className="w-5 h-5 text-purple-600" />
+              {/* Events Card */}
+              <div className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full opacity-10 -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-500"></div>
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-medium text-gray-600">Events Registered</p>
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+                      <Calendar className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
+                  <p className="text-4xl font-bold text-gray-900 mb-2">{stats.eventsRegistered}</p>
+                  <div className="flex items-center gap-1">
+                    <ArrowUpRight className={`w-4 h-4 ${stats.eventsChange >= 0 ? 'text-green-500' : 'text-red-500 rotate-90'}`} />
+                    <p className={`text-sm font-semibold ${stats.eventsChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {stats.eventsChange >= 0 ? '+' : ''}{stats.eventsChange}%
+                    </p>
+                    <p className="text-xs text-gray-500">from last month</p>
+                  </div>
                 </div>
-                <p className="text-3xl font-bold text-gray-900">{stats.eventsRegistered}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {stats.eventsChange >= 0 ? '+' : ''}{stats.eventsChange}% from last month
-                </p>
               </div>
 
-              <div className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm text-gray-600">Connections</p>
-                  <Users className="w-5 h-5 text-orange-600" />
+              {/* Connections Card */}
+              <div className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full opacity-10 -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-500"></div>
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-medium text-gray-600">Connections</p>
+                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-md">
+                      <Users className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
+                  <p className="text-4xl font-bold text-gray-900 mb-2">{stats.connections}</p>
+                  <div className="flex items-center gap-1">
+                    <ArrowUpRight className={`w-4 h-4 ${stats.connectionsChange >= 0 ? 'text-green-500' : 'text-red-500 rotate-90'}`} />
+                    <p className={`text-sm font-semibold ${stats.connectionsChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {stats.connectionsChange >= 0 ? '+' : ''}{stats.connectionsChange}%
+                    </p>
+                    <p className="text-xs text-gray-500">from last month</p>
+                  </div>
                 </div>
-                <p className="text-3xl font-bold text-gray-900">{stats.connections}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {stats.connectionsChange >= 0 ? '+' : ''}{stats.connectionsChange}% from last month
-                </p>
               </div>
             </div>
           </div>
 
-          {/* Two Column Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Quick Actions & Recent Activity */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Quick Actions */}
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Quick actions</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Link
-                    href="/dashboard/documents"
-                    className="flex items-center justify-between p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-                  >
+          {/* Single Column Layout */}
+          <div className="space-y-6">
+            {/* Quick Actions with Modern Design */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              <h3 className="text-lg font-bold text-gray-900 mb-5">Quick Actions</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Link
+                  href="/dashboard/documents"
+                  className="group relative overflow-hidden p-5 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl hover:from-blue-100 hover:to-blue-200 transition-all duration-300 border border-blue-200"
+                >
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-gray-900">Upload resume</p>
+                      <p className="font-semibold text-gray-900 mb-1">Upload Resume</p>
                       <p className="text-sm text-gray-600">Add or update resume</p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-blue-600" />
-                  </Link>
+                    <ChevronRight className="w-5 h-5 text-blue-600 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
 
-                  <Link
-                    href="/dashboard/groups"
-                    className="flex items-center justify-between p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
-                  >
+                <Link
+                  href="/dashboard/groups"
+                  className="group relative overflow-hidden p-5 bg-gradient-to-br from-green-50 to-green-100 rounded-xl hover:from-green-100 hover:to-green-200 transition-all duration-300 border border-green-200"
+                >
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-gray-900">Job groups</p>
+                      <p className="font-semibold text-gray-900 mb-1">Job Groups</p>
                       <p className="text-sm text-gray-600">Browse groups</p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-green-600" />
-                  </Link>
-                </div>
-
-                <div className="mt-4">
-                  <Link
-                    href="/dashboard/knowledge"
-                    className="flex items-center justify-between p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
-                  >
-                    <div>
-                      <p className="font-semibold text-gray-900">Explore KEA Knowledge Hub</p>
-                      <p className="text-sm text-gray-600">Open knowledge hub</p>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-purple-600" />
-                  </Link>
-                </div>
-              </div>
-
-              {/* KEA Membership Feedback */}
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">KEA membership feedback</h3>
-                <p className="text-sm text-gray-600 mb-4">Help us improve your experience</p>
-                <div className="space-y-3">
-                  <Link
-                    href="/dashboard/feedback?type=membership"
-                    className="block w-full text-left px-4 py-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <p className="text-sm font-medium text-gray-900">Feedback on membership experience</p>
-                  </Link>
-                  <Link
-                    href="/dashboard/feedback?type=feature"
-                    className="block w-full text-left px-4 py-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <p className="text-sm font-medium text-gray-900">Feature request</p>
-                  </Link>
-                  <Link
-                    href="/dashboard/feedback"
-                    className="block text-sm text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    Submit any other feedback
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column - Recent Activity & Profile */}
-            <div className="space-y-6">
-              {/* Recent Activity */}
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">
-                  Recent activity <span className="text-sm font-normal text-gray-500">(Latest updates)</span>
-                </h3>
-                <div className="space-y-4">
-                  {recentActivity.length > 0 ? (
-                    recentActivity.map((activity, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <div className={`w-8 h-8 ${getActivityBgColor(activity.type)} rounded-full flex items-center justify-center shrink-0`}>
-                          {getActivityIcon(activity.type)}
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">{activity.title}</p>
-                          <p className="text-xs text-gray-500">{getTimeAgo(activity.createdAt)}</p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8">
-                      <TrendingUp className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p className="text-sm font-medium text-gray-500 mb-1">No recent activity</p>
-                      <p className="text-xs text-gray-400">Start applying for jobs or registering for events!</p>
-                    </div>
-                  )}
-                </div>
-
-                {recentActivity.length > 0 && (
-                  <Link
-                    href="/dashboard/activity"
-                    className="block mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    View my full activity
-                  </Link>
-                )}
-              </div>
-
-              {/* Profile Section */}
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-gray-900">Profile</h3>
-                  <Link
-                    href="/dashboard/profile"
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    Manage →
-                  </Link>
-                </div>
-                <p className="text-sm text-gray-600 mb-4">
-                  {user?.profile?.bio ? (
-                    user.profile.bio.substring(0, 120) + (user.profile.bio.length > 120 ? '...' : '')
-                  ) : (
-                    'Improve your profile and update basic information to showcase your skills and expertise among engineers.'
-                  )}
-                </p>
-                <Link
-                  href="/dashboard/profile"
-                  className="block w-full py-2 bg-blue-600 text-white text-center rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                >
-                  Update profile
+                    <ChevronRight className="w-5 h-5 text-green-600 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </Link>
               </div>
 
-              {/* Dynamic Notifications */}
-              {notifications.length > 0 && notifications.slice(0, 2).map((notification, index) => (
+              <Link
+                href="/dashboard/knowledge"
+                className="group relative overflow-hidden mt-4 flex items-center justify-between p-5 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl hover:from-purple-100 hover:to-purple-200 transition-all duration-300 border border-purple-200"
+              >
+                <div>
+                  <p className="font-semibold text-gray-900 mb-1">Explore KEA Knowledge Hub</p>
+                  <p className="text-sm text-gray-600">Open knowledge hub</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-purple-600 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+
+            {/* Feedback Section */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">KEA Membership Feedback</h3>
+              <p className="text-sm text-gray-600 mb-5">Help us improve your experience</p>
+              <div className="space-y-3">
+                <Link
+                  href="/dashboard/feedback?type=membership"
+                  className="block group p-4 bg-gray-50 rounded-xl hover:bg-gradient-to-r hover:from-teal-50 hover:to-blue-50 transition-all duration-300 border border-transparent hover:border-teal-200"
+                >
+                  <p className="text-sm font-medium text-gray-900 group-hover:text-teal-700">Feedback on membership experience</p>
+                </Link>
+                <Link
+                  href="/dashboard/feedback?type=feature"
+                  className="block group p-4 bg-gray-50 rounded-xl hover:bg-gradient-to-r hover:from-teal-50 hover:to-blue-50 transition-all duration-300 border border-transparent hover:border-teal-200"
+                >
+                  <p className="text-sm font-medium text-gray-900 group-hover:text-teal-700">Feature request</p>
+                </Link>
+                <Link
+                  href="/dashboard/feedback"
+                  className="block text-sm text-teal-600 hover:text-teal-700 font-semibold hover:underline"
+                >
+                  Submit any other feedback →
+                </Link>
+              </div>
+            </div>
+
+            {/* Profile Section */}
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg p-6 border border-gray-100">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">Profile</h3>
+                <Link
+                  href="/dashboard/profile"
+                  className="text-sm text-teal-600 hover:text-teal-700 font-semibold"
+                >
+                  Manage →
+                </Link>
+              </div>
+               <p className="text-sm text-gray-600 mb-5 leading-relaxed break-words overflow-wrap-anywhere">
+                {user?.profile?.bio ? (
+                  user.profile.bio.substring(0, 120) + (user.profile.bio.length > 120 ? '...' : '')
+                ) : (
+                  'Improve your profile and update basic information to showcase your skills and expertise among engineers.'
+                )}
+              </p>
+              <Link
+                href="/dashboard/profile"
+                className="block w-full py-3 bg-gradient-to-r from-teal-600 to-blue-600 text-white text-center rounded-xl font-semibold hover:from-teal-700 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              >
+                Update Profile
+              </Link>
+            </div>
+
+            {/* Notifications */}
+            {notifications.length > 0 ? (
+              notifications.slice(0, 2).map((notification, index) => (
                 <div 
                   key={index}
-                  className={`rounded-lg border p-6 ${
-                    notification.type === 'success' ? 'bg-green-50 border-green-200' :
-                    notification.type === 'info' ? 'bg-blue-50 border-blue-200' :
-                    notification.type === 'warning' ? 'bg-yellow-50 border-yellow-200' :
-                    'bg-gray-50 border-gray-200'
+                  className={`rounded-2xl shadow-lg p-6 border ${
+                    notification.type === 'success' ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-200' :
+                    notification.type === 'info' ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200' :
+                    notification.type === 'warning' ? 'bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200' :
+                    'bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200'
                   }`}
                 >
                   <h3 className={`text-sm font-bold mb-2 ${
@@ -423,21 +436,54 @@ export default function UserDashboard() {
                     {notification.message}
                   </p>
                 </div>
-              ))}
-
-              {/* Default Notifications if none exist */}
-              {notifications.length === 0 && (
-                <>
-                  <div className="bg-green-50 rounded-lg border border-green-200 p-6">
-                    <h3 className="text-sm font-bold text-green-900 mb-2">Membership Active</h3>
-                    <p className="text-sm text-green-800">Your KEA membership is active and in good standing.</p>
+              ))
+            ) : (
+              <>
+                
+              </>
+            )}
+            
+            {/* Recent Activity with Vertical Table Format */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-lg font-bold text-gray-900">Recent Activity</h3>
+                <Clock className="w-5 h-5 text-gray-400" />
+              </div>
+              
+              {recentActivity.length > 0 ? (
+                <div className="space-y-3">
+                  {recentActivity.slice(0, 5).map((activity, index) => (
+                    <div 
+                      key={index} 
+                      className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors"
+                    >
+                      <div className={`w-10 h-10 bg-gradient-to-br ${getActivityColor(activity.type)} rounded-xl flex items-center justify-center shrink-0 shadow-md text-white`}>
+                        {getActivityIcon(activity.type)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900">{activity.title}</p>
+                        <p className="text-xs text-gray-500 mt-1">{getTimeAgo(activity.createdAt)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <TrendingUp className="w-8 h-8 text-gray-400" />
                   </div>
+                  <p className="text-sm font-medium text-gray-600 mb-1">No recent activity</p>
+                  <p className="text-xs text-gray-500">Start applying for jobs or registering for events!</p>
+                </div>
+              )}
 
-                  <div className="bg-blue-50 rounded-lg border border-blue-200 p-6">
-                    <h3 className="text-sm font-bold text-blue-900 mb-2">Welcome to KEA</h3>
-                    <p className="text-sm text-blue-800">Start exploring resources and connect with fellow engineers.</p>
-                  </div>
-                </>
+              {recentActivity.length > 0 && (
+                <Link
+                  href="/dashboard/activity"
+                  className="block mt-5 text-sm text-center text-teal-600 hover:text-teal-700 font-semibold hover:underline"
+                >
+                  View full activity →
+                </Link>
               )}
             </div>
           </div>
