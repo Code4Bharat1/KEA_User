@@ -204,7 +204,7 @@ export default function UserDashboard() {
             <h1 className="text-2xl font-bold text-gray-900">
               Welcome back, {user?.name?.split(' ')[0]}! 👋
             </h1>
-            <p className="text-gray-600 mt-1">Here's what's happening with your KEA account today.</p>
+            <p className="text-gray-600 mt-1">Here's what's happening with your KEA Profile today.</p>
           </div>
 
           {/* User Summary */}
