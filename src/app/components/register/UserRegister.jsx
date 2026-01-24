@@ -338,7 +338,7 @@ export default function UserRegister() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-teal-50 flex items-center justify-center p-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br text-black from-gray-50 via-blue-50 to-teal-50 flex items-center justify-center p-4 py-12">
       <div className="w-full max-w-3xl">
         {/* Register Card */}
         <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">

@@ -72,7 +72,7 @@ export default function UserLogin() {
 };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-teal-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br text-black from-gray-50 via-blue-50 to-teal-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Login Card */}
         <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
