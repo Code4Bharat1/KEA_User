@@ -607,7 +607,7 @@ export default function UserProfile() {
         <UserNavbar onMenuClick={() => setSidebarOpen(true)} user={user} />
 
         <div className="p-6">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-7xl mx-auto text-black">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -685,7 +685,7 @@ export default function UserProfile() {
               {/* Main Content */}
               <div className="lg:col-span-2 space-y-6">
                 {/* Profile Header Card */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="bg-white rounded-lg border text-black border-gray-200 p-6">
                   <div className="flex items-start justify-between mb-6">
                     <div className="flex items-start gap-4">
                       {/* Avatar */}
@@ -750,7 +750,7 @@ export default function UserProfile() {
                 </div>
 
                 {/* Personal Details */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="bg-white rounded-lg border text-black border-gray-200 p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base font-semibold text-gray-900">Personal details</h3>
                     <span className="text-xs text-gray-500">Basic information linked to your membership</span>
@@ -989,7 +989,7 @@ export default function UserProfile() {
                 </div>
 
                 {/* Skills */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="bg-white rounded-lg border text-black border-gray-200 p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base font-semibold text-gray-900">Skills</h3>
                     <span className="text-xs text-gray-500">Highlight your top expertise</span>
@@ -1036,7 +1036,7 @@ export default function UserProfile() {
                 </div>
 
                 {/* Experience */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="bg-white rounded-lg border text-black border-gray-200 p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base font-semibold text-gray-900">Experience</h3>
                     <span className="text-xs text-gray-500">Timeline of your professional journey</span>
