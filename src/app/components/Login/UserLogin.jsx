@@ -154,14 +154,14 @@ export default function UserLogin() {
             </div>
 
             {/* Forgot Password Link */}
-            <div className="flex justify-end">
+            {/* <div className="flex justify-end">
               <Link
                 href="/forgot-password"
                 className="text-sm text-teal-600 hover:text-teal-700 font-medium"
               >
                 Forgot Password?
               </Link>
-            </div>
+            </div> */}
 
             {/* Login Button */}
             <button
