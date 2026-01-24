@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
 import {
   Search,
   FileText,
@@ -14,14 +16,15 @@ import {
   Filter,
   ChevronDown
 } from 'lucide-react';
+
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 import UserSidebar from '../layout/sidebar';
 import UserNavbar from '../layout/navbar';
 import FileViewer from './Fileviewer';
 
 export default function KnowledgeHub() {
   const router = useRouter();
+
   const [user, setUser] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All resources');
   const [sidebarOpen, setSidebarOpen] = useState(false);
