@@ -277,7 +277,7 @@ export default function ThreadDetail() {
                           onChange={(e) => setReply(e.target.value)}
                           placeholder="Write your answer, share references or upload related (PDFs/docs)..."
                           rows={6}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none mb-4"
+                          className="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none mb-4"
                         />
                         <div className="flex items-center justify-between">
                           <p className="text-sm text-gray-600">

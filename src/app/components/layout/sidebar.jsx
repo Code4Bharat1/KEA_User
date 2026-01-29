@@ -98,7 +98,7 @@ export default function UserSidebar({ isOpen, onClose }) {
   };
 
   const renderMenuSection = (title, items) => (
-    <div className="mb-6">
+    <div className="mb-10">
       <p className="text-xs font-semibold text-gray-400 mb-2 px-3 uppercase tracking-wider">
         {title}
       </p>
@@ -160,12 +160,12 @@ export default function UserSidebar({ isOpen, onClose }) {
         flex flex-col
       `}>
         {/* Logo */}
-        <div className="p-6 border-b border-gray-200 shrink-0 bg-gradient-to-br from-[#0D2847] to-[#1a3a5c]">
+        <div className="p-2 border-b border-gray-200 shrink-0 bg-gradient-to-br from-[#0D2847] to-[#1a3a5c]">
           <div className="flex items-center justify-between ">
             <img 
               src="/logo1.png" 
               alt="KEA Logo" 
-              className="h-20 object-cover"
+              className="h-30"
               onError={(e) => {
                 e.target.style.display = 'none';
                 e.target.nextSibling.style.display = 'flex';

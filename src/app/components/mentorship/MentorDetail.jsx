@@ -352,14 +352,14 @@ export default function MentorDetail() {
               {/* Sidebar */}
               <div className="space-y-6">
                 {/* Availability Calendar */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="bg-white text-black rounded-lg border border-gray-200 p-6">
                   <h3 className="font-semibold text-gray-900 mb-4">Availability</h3>
                   <p className="text-sm text-gray-600 mb-4">
                     Pick a slot that's emerging your interactive request
                   </p>
 
                   {/* Month/Year Selector */}
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center text-black justify-between mb-4">
                     <button
                       onClick={() => {
                         if (selectedMonth === 0) {

@@ -982,7 +982,10 @@ export default function UserProfile() {
                           placeholder="Tell us about yourself..."
                         />
                       ) : (
-                        <p className="text-sm text-gray-900">{formData.bio || 'No bio added yet'}</p>
+                        <p className="text-sm text-gray-900 break-words whitespace-pre-wrap overflow-hidden">
+                          {formData.bio || 'No bio added yet'}
+                        </p>
+
                       )}
                     </div>
                   </div>

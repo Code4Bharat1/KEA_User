@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Calendar, 
-  User, 
+import {
+  Calendar,
+  User,
   Tag,
   Clock,
   Share2,
@@ -118,9 +118,9 @@ export default function BlogDetail() {
 
     try {
       const token = localStorage.getItem('userToken');
-      await axios.post(`${API_URL}/blogs/${params.id}/comments`, 
+      await axios.post(`${API_URL}/blogs/${params.id}/comments`,
         { content: comment },
-        { headers: { Authorization: `Bearer ${token}` }}
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setComment('');
       fetchComments();
@@ -133,7 +133,7 @@ export default function BlogDetail() {
   const handleShare = (platform) => {
     const url = window.location.href;
     const title = blog?.title;
-    
+
     const shareUrls = {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
       twitter: `https://twitter.com/intent/tweet?url=${url}&text=${title}`,
@@ -248,22 +248,20 @@ export default function BlogDetail() {
                   <div className="flex items-center gap-4 pb-6 border-b border-gray-200">
                     <button
                       onClick={handleLike}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                        isLiked
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${isLiked
                           ? 'bg-blue-50 text-blue-600'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
+                        }`}
                     >
                       <ThumbsUp className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
                       <span>{blog.likes?.length || 0}</span>
                     </button>
                     <button
                       onClick={handleSave}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                        isSaved
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${isSaved
                           ? 'bg-blue-50 text-blue-600'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
+                        }`}
                     >
                       <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
                       <span>Save</span>
@@ -309,7 +307,7 @@ export default function BlogDetail() {
 
                 {/* Blog Content */}
                 <div className="bg-white rounded-lg border border-gray-200 p-8">
-                  <div 
+                  <div
                     className="prose max-w-none text-gray-700"
                     dangerouslySetInnerHTML={{ __html: blog.content }}
                   />
@@ -328,7 +326,7 @@ export default function BlogDetail() {
                       onChange={(e) => setComment(e.target.value)}
                       placeholder="Write a comment..."
                       rows={4}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      className="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                     />
                     <div className="flex justify-end mt-3">
                       <button
@@ -386,8 +384,11 @@ export default function BlogDetail() {
                     </div>
                   </div>
                   {blog.author?.profile?.bio && (
-                    <p className="text-sm text-gray-600">{blog.author.profile.bio}</p>
+                    <p className="text-sm text-gray-600 break-words whitespace-pre-wrap overflow-hidden">
+                      {blog.author.profile.bio}
+                    </p>
                   )}
+
                 </div>
 
                 {/* Related Articles */}

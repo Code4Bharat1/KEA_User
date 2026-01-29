@@ -265,7 +265,7 @@ export default function GroupsList() {
 
         {/* Create Group Modal */}
         {showCreateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50 text-black z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
                 <h2 className="text-xl font-semibold text-gray-900">Create New Group</h2>
@@ -291,7 +291,7 @@ export default function GroupsList() {
                 </div>
               )}
 
-              <form onSubmit={handleCreateGroup} className="p-6 space-y-4">
+              {/* <form onSubmit={handleCreateGroup} className="p-6 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
                     Group Name <span className="text-red-500">*</span>
@@ -399,7 +399,7 @@ export default function GroupsList() {
                     Cancel
                   </button>
                 </div>
-              </form>
+              </form> */}
             </div>
           </div>
         )}
@@ -415,17 +415,17 @@ export default function GroupsList() {
                   Join sub-groups, share experiences, and learn from the KEA members
                 </p>
               </div>
-              <button
+              {/* <button
                 onClick={() => setShowCreateModal(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium"
               >
                 <Plus className="w-4 h-4" />
                 <span>Create group</span>
-              </button>
+              </button> */}
             </div>
 
             {/* Search and Filters */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+            <div className="bg-white rounded-lg border text-black border-gray-200 p-4 mb-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -493,12 +493,12 @@ export default function GroupsList() {
               <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
                 <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-500 mb-4">No groups found</p>
-                <button
+                {/* <button
                   onClick={() => setShowCreateModal(true)}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
                 >
                   Create First Group
-                </button>
+                </button> */}
               </div>
             ) : (
               <>

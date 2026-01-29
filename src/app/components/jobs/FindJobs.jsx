@@ -207,7 +207,7 @@ export default function FindJobs() {
             </div>
 
             {/* Search and Filters */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+            <div className="bg-white rounded-lg border text-black border-gray-200 p-6 mb-6">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="md:col-span-2">
                   <div className="relative">
@@ -508,7 +508,7 @@ function CreateJobModal({ onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/50 text-black z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900">Post a Job</h2>

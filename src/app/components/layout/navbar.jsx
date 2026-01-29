@@ -57,7 +57,7 @@ export default function UserNavbar({ onMenuClick, user }) {
           </button>
           <div>
             <h1 className="text-lg font-bold text-gray-900">KEA VISION & MISSION</h1>
-            <p className="text-sm text-gray-600 hidden sm:block"> Create a network of Konkani Engineers to facilitate; knowledge & experience sharing, training & counselling <br></br> of fresh Engineers and financial assistance to the aspiring students, for overall betterment of the community.</p>
+            <p className="text-sm text-gray-600 hidden sm:block"> Create a network of Konkani Engineers to facilitate knowledge & experience sharing, training & counselling <br></br> of fresh Engineers and financial assistance to the aspiring students, for overall betterment of the community.</p>
           </div>
         </div>
 

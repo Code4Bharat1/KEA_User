@@ -168,7 +168,7 @@ export default function ToolsLibrary() {
 
         {/* Add Tool Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50 text-black z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
                 <h2 className="text-xl font-semibold text-gray-900">Add New Tool</h2>
@@ -346,7 +346,7 @@ export default function ToolsLibrary() {
 
         {/* Tool Details Modal */}
         {selectedTool && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50 text-black z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
                 <h2 className="text-xl font-semibold text-gray-900">{selectedTool.name}</h2>
@@ -453,7 +453,7 @@ export default function ToolsLibrary() {
 
               {/* Search and View Toggle */}
               <div className="flex gap-3">
-                <div className="flex-1 relative">
+                <div className="flex-1 text-black relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     type="text"
@@ -606,7 +606,7 @@ export default function ToolsLibrary() {
                               onClick={() => handleToolClick(tool)}
                               className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-blue-300 transition-all cursor-pointer"
                             >
-                              <div className="flex items-start justify-between">
+                              <div className="flex items-start text-black justify-between">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-3 mb-2">
                                     <h3 className="font-medium text-gray-900 hover:text-blue-600 transition-colors">

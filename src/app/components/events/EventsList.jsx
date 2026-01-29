@@ -205,8 +205,8 @@ export default function EventsList() {
         <UserNavbar onMenuClick={() => setSidebarOpen(true)} user={user} />
 
         {/* Create Event Modal */}
-        {showCreateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        {/* {showCreateModal && (
+          <div className="fixed inset-0 bg-black/50 text-black z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
                 <h2 className="text-xl font-semibold text-gray-900">Create New Event</h2>
@@ -355,7 +355,7 @@ export default function EventsList() {
               </form>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Main Content */}
         <div className="p-6">
@@ -369,13 +369,13 @@ export default function EventsList() {
                     Discover upcoming webinars, seminars, and KEA events
                   </p>
                 </div>
-                <button
+                {/* <button
                   onClick={() => setShowCreateModal(true)}
                   className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Create</span>
-                </button>
+                </button> */}
               </div>
 
               {/* View Toggle and Filters */}
@@ -408,7 +408,7 @@ export default function EventsList() {
 
                 {/* Search and Filter */}
                 <div className="flex gap-2 w-full sm:w-auto">
-                  <div className="relative flex-1 sm:w-64">
+                  <div className="relative text-black flex-1 sm:w-64">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
                       type="text"
@@ -421,7 +421,7 @@ export default function EventsList() {
                   <select
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">All formats</option>
                     <option value="Webinar">Webinar</option>
@@ -546,7 +546,7 @@ export default function EventsList() {
                     </div>
                   </div>
 
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="bg-blue-50 border text-black border-blue-200 rounded-lg p-4">
                     <h3 className="font-semibold text-gray-900 mb-2">Quick search</h3>
                     <p className="text-sm text-gray-700 mb-3">
                       Looking for events by location, speaker, or topic?

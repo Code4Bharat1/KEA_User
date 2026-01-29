@@ -205,7 +205,7 @@ export default function UserDashboard() {
             <div className="absolute inset-0 bg-black opacity-10"></div>
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-6 h-6 text-yellow-300 animate-pulse" />
+                <Sparkles className="w-3 h-3 text-yellow-300 animate-pulse" />
                 <h1 className="text-2xl font-bold text-white">
                   Welcome back, {user?.name?.split(' ')[0]}!
                 </h1>

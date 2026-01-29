@@ -143,7 +143,7 @@ export default function BlogList() {
 
         {/* Create Blog Modal */}
         {showCreateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50 text-black z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
                 <h2 className="text-xl font-semibold text-gray-900">Create New Article</h2>
@@ -269,7 +269,7 @@ export default function BlogList() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">
-                    Technical Articles & Engineering Blogs
+                    Technical Articles & Technical Blogs
                   </h1>
                   <p className="text-sm text-gray-600 mt-1">
                     In-depth technical insights, engineering case studies, design methodologies,
@@ -301,10 +301,10 @@ export default function BlogList() {
                     placeholder="Search articles & blogs..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <button className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 sm:w-auto">
+                <button className="flex items-center text-black justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 sm:w-auto">
                   <Filter className="w-5 h-5" />
                   <span>Filter</span>
                 </button>
