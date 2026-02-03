@@ -426,66 +426,107 @@ focus:outline-none focus:ring-4 focus:ring-white/50 focus:border-white"
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12 sm:py-16 px-3 sm:px-4 md:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-10 sm:mb-12">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                 <img src="/logo1.png" alt="KEA Logo" className="h-12 sm:h-16 md:h-20 object-cover transition-transform hover:scale-110 drop-shadow-lg" />
-              </div>
-              <p className="text-gray-400 text-sm">Connecting Kokani Engineers worldwide for growth and success.</p>
+     <footer className="bg-slate-900 text-slate-300">
+      {/* Main Footer Content */}
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+          {/* Brand Section */}
+          <div className="lg:col-span-1">
+            <div className="flex items-center gap-3 mb-4">
+              <img src="/logo1.png" alt="KEA Logo" className="h-30 sm:h-20 md:h-25 object-cover transition-transform drop-shadow-lg" />
             </div>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Connecting Kokani Engineers worldwide for growth and success.
+            </p>
+          </div>
 
-            <div>
-              <h4 className="text-lg font-bold mb-4">Quick Links</h4>
-              <div className="space-y-2">
-                {["About Us", "Career Portal", "Resources", "Events"].map((link, index) => (
-                  <a key={index} href={`#${link.toLowerCase().replace(" ", "-")}`} className="block text-gray-400 hover:text-teal-400 transition-colors text-sm">
+          {/* Quick Links */}
+          <div className="lg:col-span-1">
+            <h3 className="text-white font-semibold text-base mb-4">Quick Links</h3>
+            <ul className="space-y-3">
+              {["About Us", "Career Portal", "Resources", "Events"].map((link, index) => (
+                <li key={index}>
+                  <a 
+                    href="#" 
+                    className="text-sm text-slate-400 hover:text-teal-400 transition-colors duration-200 inline-block"
+                  >
                     {link}
                   </a>
-                ))}
-              </div>
-            </div>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            <div>
-              <h4 className="text-lg font-bold mb-4">Contact</h4>
-              <div className="space-y-2 text-sm text-gray-400">
-                <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  <span>info@kea.org</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  <span>+91 123 456 7890</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-bold mb-4">Follow Us</h4>
-              <div className="flex gap-3">
-                {[
-                  { icon: Linkedin, href: "#" },
-                  { icon: Twitter, href: "#" },
-                  { icon: Instagram, href: "#" },
-                  { icon: Facebook, href: "#" }
-                ].map((social, index) => {
-                  const SocialIcon = social.icon;
-                  return (
-                    <a key={index} href={social.href} className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-teal-600 transition-colors">
-                      <SocialIcon className="w-5 h-5" />
-                    </a>
-                  );
-                })}
-              </div>
+          {/* Contact */}
+          <div className="lg:col-span-1">
+            <h3 className="text-white font-semibold text-base mb-4">Contact</h3>
+            <div className="space-y-4">
+              <a 
+                href="mailto:info@kea.org" 
+                className="flex items-center gap-3 text-sm text-slate-400 hover:text-teal-400 transition-colors duration-200 group"
+              >
+                <svg className="w-5 h-5 flex-shrink-0 text-slate-500 group-hover:text-teal-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <span>info@kea.org</span>
+              </a>
+              <a 
+                href="tel:+911234567890" 
+                className="flex items-center gap-3 text-sm text-slate-400 hover:text-teal-400 transition-colors duration-200 group"
+              >
+                <svg className="w-5 h-5 flex-shrink-0 text-slate-500 group-hover:text-teal-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                <span>+91 123 456 7890</span>
+              </a>
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2026 Kokani Engineers Association. All rights reserved.</p>
+          {/* Follow Us */}
+          <div className="lg:col-span-1">
+            <h3 className="text-white font-semibold text-base mb-4">Follow Us</h3>
+            <div className="flex gap-3">
+              {[
+                { icon: Linkedin, href: "#", label: "LinkedIn" },
+                { icon: Twitter, href: "#", label: "Twitter" },
+                { icon: Instagram, href: "#", label: "Instagram" },
+                { icon: Facebook, href: "#", label: "Facebook" }
+              ].map((social, index) => {
+                const SocialIcon = social.icon;
+                return (
+                  <a
+                    key={index}
+                    href={social.href}
+                    aria-label={social.label}
+                    className="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-teal-500 hover:border-teal-500 hover:text-white transition-all duration-200"
+                  >
+                    <SocialIcon className="w-5 h-5" />
+                  </a>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </footer>
+      </div>
+
+      {/* Disclaimer Bar */}
+      <div className="border-t border-slate-800 bg-slate-800/30">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <p className="text-xs text-slate-400 leading-relaxed">
+            <span className="font-semibold text-slate-300">Disclaimer:</span> The information on this website is provided for general educational and career-guidance purposes only and does not constitute professional advice. Kokani Engineers Association makes no guarantees regarding the accuracy or completeness of any information provided. All outcomes may vary depending on use case and context. We are not liable for any losses resulting from the use of our services or website. Use of this site implies acceptance of our terms and privacy policy.
+          </p>
+        </div>
+      </div>
+
+      {/* Copyright Bar */}
+      <div className="border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <p className="text-center text-sm text-slate-500">
+            © 2026 Kokani Engineers Association. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
     </div>
   );
 }

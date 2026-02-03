@@ -124,14 +124,14 @@ export default function UserNavbar({ onMenuClick, user }) {
 
                 {/* Menu Items */}
                 <div className="py-2">
-                  <Link
+                  {/* <Link
                     href="/dashboard/profile"
                     onClick={() => setShowProfileMenu(false)}
                     className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     <User className="w-5 h-5 text-gray-500" />
                     <span className="font-medium">My Profile</span>
-                  </Link>
+                  </Link> */}
                   
                   <Link
                     href="/dashboard/settings"
