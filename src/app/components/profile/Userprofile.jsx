@@ -93,29 +93,93 @@ export default function UserProfile() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7101/api';
 
   const categories = [
-    'Software Engineering',
-    'Civil Engineering',
-    'Mechanical Engineering',
-    'Electrical Engineering',
-    'Electronics Engineering',
-    'Chemical Engineering',
-    'Computer Engineering',
-    'Architecture',
-    'Other'
-  ];
+  "Software Engineering",
+  "Civil Engineering",
+  "Mechanical Engineering",
+  "Electrical Engineering",
+  "Electronics Engineering",
+  "Electronics and Telecommunications",
+  "Instrumentation Engineering",
+  "Chemical Engineering",
+  "Computer Engineering",
+  "Automobile Engineering",
+  "Aeronautical Engineering",
+  "Aerospace Engineering",
+  "Petrochemical Engineering",
+  "Polymer Engineering",
+  "Agricultural Engineering",
+  "Biomedical Engineering",
+  "Industrial Engineering",
+  "Production Engineering",
+  "Mining Engineering",
+  "Metallurgical Engineering",
+  "Environmental Engineering",
+  "Marine Engineering",
+  "Textile Engineering",
+  "Architecture",
+  "Other",
+];
 
-  const countries = [
-    { code: 'IN', name: 'India', dialCode: '+91' },
-    { code: 'US', name: 'United States', dialCode: '+1' },
-    { code: 'GB', name: 'United Kingdom', dialCode: '+44' },
-    { code: 'CA', name: 'Canada', dialCode: '+1' },
-    { code: 'AU', name: 'Australia', dialCode: '+61' },
-    { code: 'AE', name: 'UAE', dialCode: '+971' },
-    { code: 'SG', name: 'Singapore', dialCode: '+65' },
-    { code: 'DE', name: 'Germany', dialCode: '+49' },
-    { code: 'FR', name: 'France', dialCode: '+33' },
-    { code: 'JP', name: 'Japan', dialCode: '+81' },
-  ];
+ const countries = [
+  { code: "AF", name: "Afghanistan", dialCode: "+93" },
+  { code: "AL", name: "Albania", dialCode: "+355" },
+  { code: "DZ", name: "Algeria", dialCode: "+213" },
+  { code: "AD", name: "Andorra", dialCode: "+376" },
+  { code: "AO", name: "Angola", dialCode: "+244" },
+  { code: "AR", name: "Argentina", dialCode: "+54" },
+  { code: "AM", name: "Armenia", dialCode: "+374" },
+  { code: "AU", name: "Australia", dialCode: "+61" },
+  { code: "AT", name: "Austria", dialCode: "+43" },
+  { code: "AZ", name: "Azerbaijan", dialCode: "+994" },
+
+  { code: "BH", name: "Bahrain", dialCode: "+973" },
+  { code: "BD", name: "Bangladesh", dialCode: "+880" },
+  { code: "BE", name: "Belgium", dialCode: "+32" },
+  { code: "BR", name: "Brazil", dialCode: "+55" },
+  { code: "CA", name: "Canada", dialCode: "+1" },
+  { code: "CN", name: "China", dialCode: "+86" },
+
+  { code: "EG", name: "Egypt", dialCode: "+20" },
+  { code: "FR", name: "France", dialCode: "+33" },
+  { code: "DE", name: "Germany", dialCode: "+49" },
+
+  // 🇬🇨 GCC COUNTRIES (IMPORTANT)
+  { code: "AE", name: "United Arab Emirates", dialCode: "+971" },
+  { code: "SA", name: "Saudi Arabia", dialCode: "+966" },
+  { code: "QA", name: "Qatar", dialCode: "+974" },
+  { code: "KW", name: "Kuwait", dialCode: "+965" },
+  { code: "OM", name: "Oman", dialCode: "+968" },
+
+
+  { code: "IN", name: "India", dialCode: "+91" },
+  { code: "ID", name: "Indonesia", dialCode: "+62" },
+  { code: "IR", name: "Iran", dialCode: "+98" },
+  { code: "IQ", name: "Iraq", dialCode: "+964" },
+
+  { code: "JP", name: "Japan", dialCode: "+81" },
+  { code: "KE", name: "Kenya", dialCode: "+254" },
+  { code: "MY", name: "Malaysia", dialCode: "+60" },
+  { code: "MX", name: "Mexico", dialCode: "+52" },
+  { code: "NP", name: "Nepal", dialCode: "+977" },
+  { code: "NG", name: "Nigeria", dialCode: "+234" },
+  { code: "PK", name: "Pakistan", dialCode: "+92" },
+  { code: "PH", name: "Philippines", dialCode: "+63" },
+  { code: "RU", name: "Russia", dialCode: "+7" },
+  { code: "SG", name: "Singapore", dialCode: "+65" },
+  { code: "ZA", name: "South Africa", dialCode: "+27" },
+  { code: "KR", name: "South Korea", dialCode: "+82" },
+  { code: "ES", name: "Spain", dialCode: "+34" },
+  { code: "LK", name: "Sri Lanka", dialCode: "+94" },
+  { code: "SE", name: "Sweden", dialCode: "+46" },
+  { code: "CH", name: "Switzerland", dialCode: "+41" },
+  { code: "TH", name: "Thailand", dialCode: "+66" },
+  { code: "TR", name: "Turkey", dialCode: "+90" },
+  { code: "UA", name: "Ukraine", dialCode: "+380" },
+  { code: "GB", name: "United Kingdom", dialCode: "+44" },
+  { code: "US", name: "United States", dialCode: "+1" },
+  { code: "VN", name: "Vietnam", dialCode: "+84" },
+];
+
 
   // Months array
   const months = [
@@ -890,7 +954,6 @@ export default function UserProfile() {
                           onChange={handleInputChange}
                           className="w-full text-sm text-gray-900 border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
                         >
-                          <option value="">Country to be replace by Field</option>
                           {countries.map((country) => (
                             <option key={country.code} value={country.code}>
                               {country.name}

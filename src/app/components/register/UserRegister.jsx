@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -69,8 +68,24 @@ export default function UserRegister() {
     "Mechanical Engineering",
     "Electrical Engineering",
     "Electronics Engineering",
+    "Electronics and Telecommunications",
+    "Instrumentation Engineering",
     "Chemical Engineering",
     "Computer Engineering",
+    "Automobile Engineering",
+    "Aeronautical Engineering",
+    "Aerospace Engineering",
+    "Petrochemical Engineering",
+    "Polymer Engineering",
+    "Agricultural Engineering",
+    "Biomedical Engineering",
+    "Industrial Engineering",
+    "Production Engineering",
+    "Mining Engineering",
+    "Metallurgical Engineering",
+    "Environmental Engineering",
+    "Marine Engineering",
+    "Textile Engineering",
     "Architecture",
     "Other",
   ];
@@ -305,6 +320,21 @@ export default function UserRegister() {
         });
       }
 
+      // Create references array if provided
+      const referencesArray = [];
+      if (formData.reference1Name || formData.reference1Contact) {
+        referencesArray.push({
+          name: formData.reference1Name || "",
+          contact: formData.reference1Contact || ""
+        });
+      }
+      if (formData.reference2Name || formData.reference2Contact) {
+        referencesArray.push({
+          name: formData.reference2Name || "",
+          contact: formData.reference2Contact || ""
+        });
+      }
+
       const profileData = {
         phone: formData.phone || "",
         location: formData.location || "",
@@ -312,10 +342,10 @@ export default function UserRegister() {
         bio: formData.bio || "",
         company: formData.company || "",
         position: formData.position || "",
+        category: formData.category || "Other", // ✅ Now inside profile
         skills: [],
         experience: experienceArray,
-        category: formData.category || "",
-        // DO NOT SEND education or references
+        references: referencesArray, // ✅ Now sending references
       };
 
       const response = await axios.post(`${API_URL}/auth/register`, {
