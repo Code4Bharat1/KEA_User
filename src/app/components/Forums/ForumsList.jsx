@@ -17,6 +17,8 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import UserSidebar from '../layout/sidebar';
 import UserNavbar from '../layout/navbar';
+import { toast } from 'react-hot-toast';
+
 
 export default function ForumsList() {
   const router = useRouter();
@@ -120,7 +122,10 @@ export default function ForumsList() {
 
       setShowCreateModal(false);
       resetForm();
-      router.push(`/dashboard/forums/${data._id}`);
+      // router.push(`/dashboard/forums/${data._id}`);
+      toast.success('Thread sent for admin approval');
+      router.push('/dashboard/forums');
+
     } catch (error) {
       alert(error.response?.data?.message || 'Failed to create thread');
     } finally {
@@ -363,8 +368,8 @@ export default function ForumsList() {
                           setCurrentPage(1);
                         }}
                         className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${selectedCategory === cat.name
-                            ? 'bg-blue-50 text-blue-700 font-medium'
-                            : 'text-gray-700 hover:bg-gray-50'
+                          ? 'bg-blue-50 text-blue-700 font-medium'
+                          : 'text-gray-700 hover:bg-gray-50'
                           }`}
                       >
                         <span className="truncate">{cat.name}</span>
@@ -527,8 +532,8 @@ export default function ForumsList() {
                           key={pageNum}
                           onClick={() => setCurrentPage(pageNum)}
                           className={`w-10 h-10 rounded-lg ${currentPage === pageNum
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                         >
                           {pageNum}

@@ -180,6 +180,24 @@ export default function BlogList() {
                       <option value="Mechanical">Mechanical</option>
                       <option value="More Templates">More Templates</option>
                       <option value="Career">Career</option>
+                      <option value="Structural Engineering">Structural Engineering</option>
+                      <option value="Electrical Engineering">Electrical Engineering</option>
+                      <option value="Architecture & Planning">Architecture & Planning</option>
+                      <option value="Construction Management">Construction Management</option>
+                      <option value="Geotechnical Engineering">Geotechnical Engineering</option>
+                      <option value="Transportation Engineering">Transportation Engineering</option>
+                      <option value="Water Resources Engineering">Water Resources Engineering</option>
+                      <option value="Environmental Engineering">Environmental Engineering</option>
+                      <option value="Project Management">Project Management</option>
+                      <option value="Quantity Surveying & Estimation">Quantity Surveying & Estimation</option>
+                      <option value="Building Information Modeling (BIM)">Building Information Modeling (BIM)</option>
+                      <option value="Codes, Standards & Templates">Codes, Standards & Templates</option>
+                      <option value="Research & Case Studies">Research & Case Studies</option>
+                      <option value="Career & Professional Development">Career & Professional Development</option>
+                      <option value="Interview Preparation">Interview Preparation</option>
+                      <option value="Higher Studies & Certifications">Higher Studies & Certifications</option>
+                      <option value="Industry News & Insights">Industry News & Insights</option>
+
                     </select>
                   </div>
 
@@ -320,8 +338,8 @@ export default function BlogList() {
                       setCurrentPage(1);
                     }}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === cat
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                   >
                     {cat}
@@ -435,8 +453,8 @@ export default function BlogList() {
                           key={pageNum}
                           onClick={() => setCurrentPage(pageNum)}
                           className={`w-10 h-10 rounded-lg font-medium ${currentPage === pageNum
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                         >
                           {pageNum}

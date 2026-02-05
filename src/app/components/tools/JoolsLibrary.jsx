@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Download, 
-  ExternalLink, 
+import {
+  Search,
+  Download,
+  ExternalLink,
   Eye,
   Grid,
   List,
@@ -185,7 +185,7 @@ export default function ToolsLibrary() {
                       type="text"
                       required
                       value={newTool.name}
-                      onChange={(e) => setNewTool({...newTool, name: e.target.value})}
+                      onChange={(e) => setNewTool({ ...newTool, name: e.target.value })}
                       placeholder="e.g., AutoCAD"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -196,7 +196,7 @@ export default function ToolsLibrary() {
                     <select
                       required
                       value={newTool.category}
-                      onChange={(e) => setNewTool({...newTool, category: e.target.value})}
+                      onChange={(e) => setNewTool({ ...newTool, category: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select category</option>
@@ -207,6 +207,17 @@ export default function ToolsLibrary() {
                       <option value="Electrical">Electrical</option>
                       <option value="Project & planning">Project & planning</option>
                       <option value="Site tools">Site tools</option>
+                      <option value=" Civil Engineering">Civil Engineering</option>
+                      <option value=" Construction Management">Construction Management</option>
+                      <option value=" Surveying">Surveying</option>
+                      <option value="Geotechnical Engineering">Geotechnical tool</option>
+                      <option value=" Environmental Engineering">Environmental tool</option>
+                      <option value=" Project Planning">Project Planning tool</option>
+                      <option value=" Safety & Compliance">Safety & Compliance tool</option>
+                      <option value=" Productivity Tools">Productivity Tools</option>
+                      <option value=" AI & Automation">AI & Automation tool</option>
+                  
+
                     </select>
                   </div>
 
@@ -215,7 +226,7 @@ export default function ToolsLibrary() {
                     <input
                       type="text"
                       value={newTool.version}
-                      onChange={(e) => setNewTool({...newTool, version: e.target.value})}
+                      onChange={(e) => setNewTool({ ...newTool, version: e.target.value })}
                       placeholder="e.g., 2024"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -225,7 +236,7 @@ export default function ToolsLibrary() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Platform</label>
                     <select
                       value={newTool.platform}
-                      onChange={(e) => setNewTool({...newTool, platform: e.target.value})}
+                      onChange={(e) => setNewTool({ ...newTool, platform: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select platform</option>
@@ -241,7 +252,7 @@ export default function ToolsLibrary() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">License</label>
                     <select
                       value={newTool.license}
-                      onChange={(e) => setNewTool({...newTool, license: e.target.value})}
+                      onChange={(e) => setNewTool({ ...newTool, license: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select license</option>
@@ -258,7 +269,7 @@ export default function ToolsLibrary() {
                     <input
                       type="text"
                       value={newTool.fileSize}
-                      onChange={(e) => setNewTool({...newTool, fileSize: e.target.value})}
+                      onChange={(e) => setNewTool({ ...newTool, fileSize: e.target.value })}
                       placeholder="e.g., 2.5 GB"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -270,7 +281,7 @@ export default function ToolsLibrary() {
                   <textarea
                     required
                     value={newTool.description}
-                    onChange={(e) => setNewTool({...newTool, description: e.target.value})}
+                    onChange={(e) => setNewTool({ ...newTool, description: e.target.value })}
                     placeholder="Brief description of the tool..."
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -282,7 +293,7 @@ export default function ToolsLibrary() {
                   <input
                     type="text"
                     value={newTool.features}
-                    onChange={(e) => setNewTool({...newTool, features: e.target.value})}
+                    onChange={(e) => setNewTool({ ...newTool, features: e.target.value })}
                     placeholder="e.g., 3D modeling, Rendering, Animation"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -293,7 +304,7 @@ export default function ToolsLibrary() {
                   <input
                     type="text"
                     value={newTool.requirements}
-                    onChange={(e) => setNewTool({...newTool, requirements: e.target.value})}
+                    onChange={(e) => setNewTool({ ...newTool, requirements: e.target.value })}
                     placeholder="e.g., Windows 10, 8GB RAM, Graphics card"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -305,7 +316,7 @@ export default function ToolsLibrary() {
                     <input
                       type="url"
                       value={newTool.downloadLink}
-                      onChange={(e) => setNewTool({...newTool, downloadLink: e.target.value})}
+                      onChange={(e) => setNewTool({ ...newTool, downloadLink: e.target.value })}
                       placeholder="https://..."
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -316,7 +327,7 @@ export default function ToolsLibrary() {
                     <input
                       type="url"
                       value={newTool.documentationLink}
-                      onChange={(e) => setNewTool({...newTool, documentationLink: e.target.value})}
+                      onChange={(e) => setNewTool({ ...newTool, documentationLink: e.target.value })}
                       placeholder="https://..."
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -490,7 +501,7 @@ export default function ToolsLibrary() {
             <div className="flex gap-6">
               {/* Category Sidebar Overlay (Mobile) */}
               {categorySidebarOpen && (
-                <div 
+                <div
                   className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
                   onClick={() => setCategorySidebarOpen(false)}
                 />
@@ -507,7 +518,7 @@ export default function ToolsLibrary() {
                 <div className="bg-white rounded-lg border border-gray-200 p-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-gray-900">Categories</h3>
-                    <button 
+                    <button
                       onClick={() => setCategorySidebarOpen(false)}
                       className="md:hidden p-1 hover:bg-gray-100 rounded"
                     >
@@ -523,11 +534,10 @@ export default function ToolsLibrary() {
                           setCurrentPage(1);
                           setCategorySidebarOpen(false);
                         }}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
-                          selectedCategory === cat.name
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${selectedCategory === cat.name
                             ? 'bg-blue-50 text-blue-700 font-medium'
                             : 'text-gray-700 hover:bg-gray-50'
-                        }`}
+                          }`}
                       >
                         <span>{cat.name}</span>
                         <span className="text-gray-500">{cat.count}</span>
@@ -546,7 +556,7 @@ export default function ToolsLibrary() {
                       {loading ? 'Loading...' : `Showing ${tools.length} of ${tools.length} tools`}
                     </p>
                   </div>
-                  
+
                   {loading ? (
                     <div className="p-12 flex items-center justify-center">
                       <Loader className="w-8 h-8 animate-spin text-blue-600" />
@@ -572,22 +582,21 @@ export default function ToolsLibrary() {
                                   <p className="text-xs text-gray-500 mt-1">{tool.category}</p>
                                 </div>
                                 {tool.license && (
-                                  <span className={`px-2 py-1 text-xs rounded ${
-                                    tool.license === 'Free' ? 'bg-green-100 text-green-700' :
-                                    tool.license === 'Paid' ? 'bg-blue-100 text-blue-700' :
-                                    'bg-gray-100 text-gray-700'
-                                  }`}>
+                                  <span className={`px-2 py-1 text-xs rounded ${tool.license === 'Free' ? 'bg-green-100 text-green-700' :
+                                      tool.license === 'Paid' ? 'bg-blue-100 text-blue-700' :
+                                        'bg-gray-100 text-gray-700'
+                                    }`}>
                                     {tool.license}
                                   </span>
                                 )}
                               </div>
-                              
+
                               <p className="text-sm text-gray-600 line-clamp-2 mb-3">{tool.description}</p>
-                              
+
                               <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
                                 <span>{tool.platform || 'Cross-platform'}</span>
                               </div>
-                              
+
                               <button
                                 onClick={() => handleToolClick(tool)}
                                 className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium"
@@ -613,11 +622,10 @@ export default function ToolsLibrary() {
                                       {tool.name}
                                     </h3>
                                     {tool.license && (
-                                      <span className={`px-2 py-1 text-xs rounded ${
-                                        tool.license === 'Free' ? 'bg-green-100 text-green-700' :
-                                        tool.license === 'Paid' ? 'bg-blue-100 text-blue-700' :
-                                        'bg-gray-100 text-gray-700'
-                                      }`}>
+                                      <span className={`px-2 py-1 text-xs rounded ${tool.license === 'Free' ? 'bg-green-100 text-green-700' :
+                                          tool.license === 'Paid' ? 'bg-blue-100 text-blue-700' :
+                                            'bg-gray-100 text-gray-700'
+                                        }`}>
                                         {tool.license}
                                       </span>
                                     )}

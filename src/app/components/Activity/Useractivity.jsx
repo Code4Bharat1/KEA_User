@@ -252,7 +252,7 @@ export default function UserActivity() {
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+            <div className="bg-white rounded-lg border text-black border-gray-200 p-6 mb-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Search */}
                 <div className="relative">
