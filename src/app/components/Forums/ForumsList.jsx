@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Search, 
+import {
+  Search,
   Plus,
   MessageSquare,
   Pin,
@@ -130,7 +130,7 @@ export default function ForumsList() {
 
   const handleDeleteThread = async (threadId, e) => {
     e.stopPropagation();
-    
+
     if (!confirm('Are you sure you want to delete this thread? This action cannot be undone.')) {
       return;
     }
@@ -140,7 +140,7 @@ export default function ForumsList() {
       await axios.delete(`${API_URL}/forums/${threadId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       fetchThreads();
       alert('Thread deleted successfully');
     } catch (error) {
@@ -150,13 +150,13 @@ export default function ForumsList() {
 
   const handleTogglePin = async (threadId, e) => {
     e.stopPropagation();
-    
+
     try {
       const token = localStorage.getItem('userToken');
       await axios.patch(`${API_URL}/forums/${threadId}/pin`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       fetchThreads();
     } catch (error) {
       alert(error.response?.data?.message || 'Failed to pin thread');
@@ -165,13 +165,13 @@ export default function ForumsList() {
 
   const handleToggleLock = async (threadId, e) => {
     e.stopPropagation();
-    
+
     try {
       const token = localStorage.getItem('userToken');
       await axios.patch(`${API_URL}/forums/${threadId}/lock`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       fetchThreads();
     } catch (error) {
       alert(error.response?.data?.message || 'Failed to lock thread');
@@ -204,6 +204,17 @@ export default function ForumsList() {
     'Mechanical & manufacturing',
     'Materials & testing',
     'Jobs & opportunities',
+    'Geotechnical Engineering',
+    'Transportation Engineering',
+    'Environmental Engineering',
+    'Water Resources & Hydrology',
+    'Construction Management',
+    'Automation & Robotics',
+    'BIM & CAD',
+    'Software & IT',
+    'Quality & Safety (HSE)',
+    'Jobs & Opportunities',
+    'Internships & Training',
     'General'
   ];
 
@@ -226,7 +237,7 @@ export default function ForumsList() {
 
         {/* Create Thread Modal */}
         {showCreateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50 text-black z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
                 <h2 className="text-xl font-semibold text-gray-900">New Thread</h2>
@@ -242,7 +253,7 @@ export default function ForumsList() {
                     type="text"
                     required
                     value={newThread.title}
-                    onChange={(e) => setNewThread({...newThread, title: e.target.value})}
+                    onChange={(e) => setNewThread({ ...newThread, title: e.target.value })}
                     placeholder="What's your question or topic?"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -253,7 +264,7 @@ export default function ForumsList() {
                   <select
                     required
                     value={newThread.category}
-                    onChange={(e) => setNewThread({...newThread, category: e.target.value})}
+                    onChange={(e) => setNewThread({ ...newThread, category: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select category</option>
@@ -268,7 +279,7 @@ export default function ForumsList() {
                   <textarea
                     required
                     value={newThread.content}
-                    onChange={(e) => setNewThread({...newThread, content: e.target.value})}
+                    onChange={(e) => setNewThread({ ...newThread, content: e.target.value })}
                     placeholder="Describe your question or topic in detail..."
                     rows={6}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -280,7 +291,7 @@ export default function ForumsList() {
                   <input
                     type="text"
                     value={newThread.tags}
-                    onChange={(e) => setNewThread({...newThread, tags: e.target.value})}
+                    onChange={(e) => setNewThread({ ...newThread, tags: e.target.value })}
                     placeholder="e.g., design, analysis, steel"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -351,11 +362,10 @@ export default function ForumsList() {
                           setSelectedCategory(cat.name);
                           setCurrentPage(1);
                         }}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
-                          selectedCategory === cat.name
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${selectedCategory === cat.name
                             ? 'bg-blue-50 text-blue-700 font-medium'
                             : 'text-gray-700 hover:bg-gray-50'
-                        }`}
+                          }`}
                       >
                         <span className="truncate">{cat.name}</span>
                         <span className="text-gray-500 ml-2">{cat.count}</span>
@@ -469,18 +479,16 @@ export default function ForumsList() {
                             <div className="flex gap-1">
                               <button
                                 onClick={(e) => handleTogglePin(thread._id, e)}
-                                className={`p-2 rounded-lg hover:bg-gray-100 ${
-                                  thread.isPinned ? 'text-blue-600' : 'text-gray-400'
-                                }`}
+                                className={`p-2 rounded-lg hover:bg-gray-100 ${thread.isPinned ? 'text-blue-600' : 'text-gray-400'
+                                  }`}
                                 title={thread.isPinned ? 'Unpin thread' : 'Pin thread'}
                               >
                                 <Pin className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={(e) => handleToggleLock(thread._id, e)}
-                                className={`p-2 rounded-lg hover:bg-gray-100 ${
-                                  thread.isLocked ? 'text-orange-600' : 'text-gray-400'
-                                }`}
+                                className={`p-2 rounded-lg hover:bg-gray-100 ${thread.isLocked ? 'text-orange-600' : 'text-gray-400'
+                                  }`}
                                 title={thread.isLocked ? 'Unlock thread' : 'Lock thread'}
                               >
                                 <Lock className="w-4 h-4" />
@@ -518,11 +526,10 @@ export default function ForumsList() {
                         <button
                           key={pageNum}
                           onClick={() => setCurrentPage(pageNum)}
-                          className={`w-10 h-10 rounded-lg ${
-                            currentPage === pageNum
+                          className={`w-10 h-10 rounded-lg ${currentPage === pageNum
                               ? 'bg-blue-600 text-white'
                               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          }`}
+                            }`}
                         >
                           {pageNum}
                         </button>
