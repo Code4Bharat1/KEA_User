@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
+import {
   ArrowLeft,
   MessageSquare,
   Eye,
@@ -49,10 +49,38 @@ export default function ThreadDetail() {
     }
   };
 
+  // const fetchThreadDetail = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const { data } = await axios.get(`${API_URL}/forums/${params.id}`);
+  //     setThread(data);
+  //   } catch (error) {
+  //     console.error('Error fetching thread:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchThreadDetail = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`${API_URL}/forums/${params.id}`);
+      const token = localStorage.getItem('userToken'); // ✅ same token
+
+      if (!token) {
+        console.warn('No user token found');
+        setThread(null);
+        return;
+      }
+
+      const { data } = await axios.get(
+        `${API_URL}/forums/${params.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ FIX
+          },
+        }
+      );
+
       setThread(data);
     } catch (error) {
       console.error('Error fetching thread:', error);
@@ -61,14 +89,39 @@ export default function ThreadDetail() {
     }
   };
 
+
+  // const fetchRelatedThreads = async () => {
+  //   try {
+  //     const { data } = await axios.get(`${API_URL}/forums?limit=5`);
+  //     setRelatedThreads(data.threads?.filter(t => t._id !== params.id) || []);
+  //   } catch (error) {
+  //     console.error('Error fetching related threads:', error);
+  //   }
+  // };
+
   const fetchRelatedThreads = async () => {
     try {
-      const { data } = await axios.get(`${API_URL}/forums?limit=5`);
-      setRelatedThreads(data.threads?.filter(t => t._id !== params.id) || []);
+      const token = localStorage.getItem('userToken');
+
+      if (!token) return;
+
+      const { data } = await axios.get(
+        `${API_URL}/forums?limit=5`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ FIX
+          },
+        }
+      );
+
+      setRelatedThreads(
+        data.threads?.filter(t => t._id !== params.id) || []
+      );
     } catch (error) {
       console.error('Error fetching related threads:', error);
     }
   };
+
 
   const handleReply = async (e) => {
     e.preventDefault();
@@ -76,9 +129,9 @@ export default function ThreadDetail() {
 
     try {
       const token = localStorage.getItem('userToken');
-      await axios.post(`${API_URL}/forums/${params.id}/reply`, 
+      await axios.post(`${API_URL}/forums/${params.id}/reply`,
         { content: reply },
-        { headers: { Authorization: `Bearer ${token}` }}
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setReply('');
       fetchThreadDetail();
@@ -167,7 +220,7 @@ export default function ThreadDetail() {
                         </span>
                       ))}
                     </div>
-                    
+
                     <div className="flex items-start gap-3 mb-4">
                       {thread.isPinned && (
                         <Pin className="w-5 h-5 text-blue-600 flex-shrink-0 mt-1" />
@@ -244,11 +297,10 @@ export default function ThreadDetail() {
                             <div className="flex items-center gap-3">
                               <button
                                 onClick={() => handleLikeReply(reply._id)}
-                                className={`flex items-center gap-1 text-sm ${
-                                  reply.likes?.includes(user?._id)
-                                    ? 'text-blue-600'
-                                    : 'text-gray-600 hover:text-blue-600'
-                                }`}
+                                className={`flex items-center gap-1 text-sm ${reply.likes?.includes(user?._id)
+                                  ? 'text-blue-600'
+                                  : 'text-gray-600 hover:text-blue-600'
+                                  }`}
                               >
                                 <ThumbsUp className="w-4 h-4" />
                                 <span>{reply.likes?.length || 0}</span>

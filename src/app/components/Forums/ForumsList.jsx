@@ -69,9 +69,44 @@ export default function ForumsList() {
     }
   };
 
+  // const fetchThreads = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const params = new URLSearchParams();
+  //     if (selectedCategory !== 'All discussions') {
+  //       params.append('category', selectedCategory);
+  //     }
+  //     if (searchQuery) {
+  //       params.append('search', searchQuery);
+  //     }
+  //     if (sortBy) {
+  //       params.append('sort', sortBy);
+  //     }
+  //     params.append('page', currentPage);
+  //     params.append('limit', 20);
+
+  //     const { data } = await axios.get(`${API_URL}/forums?${params.toString()}`);
+  //     setThreads(data.threads || []);
+  //     setTotalPages(data.pagination?.pages || 1);
+  //   } catch (error) {
+  //     console.error('Error fetching threads:', error);
+  //     setThreads([]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchThreads = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem('userToken'); // ✅ SAME token
+
+      if (!token) {
+        console.warn('No user token found');
+        setThreads([]);
+        return;
+      }
+
       const params = new URLSearchParams();
       if (selectedCategory !== 'All discussions') {
         params.append('category', selectedCategory);
@@ -85,7 +120,15 @@ export default function ForumsList() {
       params.append('page', currentPage);
       params.append('limit', 20);
 
-      const { data } = await axios.get(`${API_URL}/forums?${params.toString()}`);
+      const { data } = await axios.get(
+        `${API_URL}/forums?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ FIX
+          },
+        }
+      );
+
       setThreads(data.threads || []);
       setTotalPages(data.pagination?.pages || 1);
     } catch (error) {
@@ -96,14 +139,41 @@ export default function ForumsList() {
     }
   };
 
+
+  // const fetchCategories = async () => {
+  //   try {
+  //     const { data } = await axios.get(`${API_URL}/forums/categories/stats`);
+  //     setCategories(data.categories || []);
+  //   } catch (error) {
+  //     console.error('Error fetching categories:', error);
+  //   }
+  // };
+
   const fetchCategories = async () => {
     try {
-      const { data } = await axios.get(`${API_URL}/forums/categories/stats`);
+      const token = localStorage.getItem('userToken');
+
+      if (!token) {
+        console.warn('No user token found for categories');
+        setCategories([]);
+        return;
+      }
+
+      const { data } = await axios.get(
+        `${API_URL}/forums/categories/stats`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
       setCategories(data.categories || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
   };
+
 
   const handleCreateThread = async (e) => {
     e.preventDefault();
